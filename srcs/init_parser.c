@@ -20,6 +20,6 @@ t_parser         *init_parser(char *path)
         display_error(CANT_ALLOCATE);
     if ((p->fd = open(path, O_RDONLY)) < 0)
         display_error(CANT_OPEN);
-    // p->lc_total = 0u;
+	p->ops = NULL;
     return (p);
 }

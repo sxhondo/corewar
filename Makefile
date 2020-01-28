@@ -22,7 +22,7 @@ LIB_DIR = libft/
 LIB_FT = $(LIB_DIR)libft.a
 
 SRCS_DIR = srcs/
-SRCS_LIST =	main.c\
+SRCS_LIST =	main.c \
 			dasm_parser.c init_parser.c\
 			display_helper.c
 

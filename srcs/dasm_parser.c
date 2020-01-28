@@ -1,4 +1,4 @@
-#include "d_asm.h"
+#include "dasm.h"
 
 static void		check_header(int fd)
 {
@@ -18,7 +18,7 @@ static void		check_header(int fd)
 		display_error(INVALID_HEADER);				
 }
 
-static void		check_name(t_parser *p)
+static char		*check_name(t_parser *p)
 {
 	int 		i, k;
 	char		*res;
@@ -42,17 +42,17 @@ static void		check_name(t_parser *p)
 	i = -1;
 	while (++i < k)
 		res[i] = b[i];
-	p->name = res;
+	return (res);	
 }
 
-void			d_asm_parser(char *path)
+void			dasm_parser(char *path)
 {
 	uint8_t		b[4];
     t_parser	*p;
 
     p = init_parser(path);
 	check_header(p->fd);
-	check_name(p);
+	p->name = check_name(p);
 
 	ft_printf("\nname: %s\n", p->name);
 	free(p->name);

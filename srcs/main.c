@@ -1,4 +1,4 @@
-#include "d_asm.h"
+#include "dasm.h"
 
 static int		check_ext(char *path)
 {
@@ -15,7 +15,7 @@ int				main(int ac, char **av)
 {
     if (ac == 2 && check_ext(av[1]))
     {
-        d_asm_parser(av[1]);
+        dasm_parser(av[1]);
     }
     else
         display_error(INVALID_FILE);

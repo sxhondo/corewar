@@ -43,7 +43,7 @@ enum errors {
 	INVALID_HEADER
 };
 
-void                d_asm_parser(char *path);
+void                dasm_parser(char *path);
 t_parser            *init_parser(char *path);
 
 void                display_error(int err);

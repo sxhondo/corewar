@@ -16,13 +16,14 @@ CC = gcc
 CFLAGS = -g
 
 INC_DIR = incs/
-INC  = $(INC_DIR)d_asm.h
+INC  = $(INC_DIR)dasm.h
 
 LIB_DIR = libft/
 LIB_FT = $(LIB_DIR)libft.a
 
 SRCS_DIR = srcs/
-SRCS_LIST =	main.c asm_parser.c init_parser.c\
+SRCS_LIST =	main.c\
+			dasm_parser.c init_parser.c\
 			display_helper.c
 
 OBJ_DIR = obj/

@@ -12,6 +12,22 @@
 
 #include "dasm.h"
 
+void 			display_grid(uint8_t g[], unsigned size, int hl)
+{
+	for (int q = 0; q < size; q++)
+	{
+		if ((q % 16) == 0)
+			ft_printf("\n");
+		if (hl == q)
+			ft_printf("{red}%02x{eoc}", g[q]);
+		else
+			ft_printf("%02x", g[q]);
+		if (q % 2)
+			ft_printf("\t");
+	}
+	ft_printf("\n---\n");
+}
+
 void            display_error(int num)
 {
     ft_printf("error: ");

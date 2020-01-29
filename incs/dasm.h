@@ -25,7 +25,9 @@ static char         *errors[] =
     "cannot allocate memory",
     "cannot open file",
 	"invalid header",
-	"invalid NULL after champion name"
+	"invalid NULL",
+	"invalid operation name",
+	"invalid type argument"
 };
 
 enum errors 		{
@@ -34,13 +36,18 @@ enum errors 		{
    					CANT_ALLOCATE,
 					CANT_OPEN,
 					INVALID_HEADER,
-					INVALID_NULL_1
+					INVALID_NULL,
+					INVALID_OP_NAME,
+					INVALID_TYPE_ARG
+					
 };
 
 typedef struct 		s_op
 {
-	char 			*name;
+	uint8_t 		op;
+	uint8_t			args_type_code[3];
 	uint8_t			args[3];
+	struct s_op		*next;
 }					t_op;
 
 typedef struct      s_parser
@@ -49,8 +56,11 @@ typedef struct      s_parser
     char            *name;
     char            *comment;
 	unsigned		exe_code_size;
+	int 			pos;
 	t_op			*ops;
 }                   t_parser;
+
+
 
 typedef struct 		s_op_tab
 {
@@ -61,6 +71,17 @@ typedef struct 		s_op_tab
 	uint8_t			args_types[3];
 	uint8_t			t_dir_size;	
 }					t_op_tab;
+
+
+void                dasm_parser(char *path);
+
+
+void 				add_operation(t_op **ops, t_op *elem);
+t_parser            *init_parser(char *path);
+t_op 				*init_operation();
+
+void 				display_grid(uint8_t g[], unsigned size, int hl);
+void                display_error(int err);
 
 static t_op_tab		op_tab[] = 
 {
@@ -199,8 +220,4 @@ static t_op_tab		op_tab[] =
 	},
 };
 
-void                dasm_parser(char *path);
-t_parser            *init_parser(char *path);
-
-void                display_error(int err);
 #endif

@@ -8,11 +8,11 @@
 			"name": "(lldb) Launch",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/asm",
+			"program": "${workspaceFolder}/dasm",
 			"args": [
-				"vm_champs/bee_gees.s"
+				"test.cor"
 			],
-			"stopAtEntry": true,
+			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
 			"environment": [],
 			"externalConsole": false,

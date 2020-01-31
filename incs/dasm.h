@@ -27,7 +27,10 @@ static char         *errors[] =
 	"invalid header",
 	"invalid NULL",
 	"invalid operation name",
-	"invalid type argument"
+	"invalid type argument",
+	"invalid register argument",
+	"invalid size of argument",
+	"cannot create file, probably already exist"
 };
 
 enum errors 		{
@@ -38,7 +41,10 @@ enum errors 		{
 					INVALID_HEADER,
 					INVALID_NULL,
 					INVALID_OP_NAME,
-					INVALID_TYPE_ARG
+					INVALID_TYPE_ARG,
+					REGISTER_OUT_OF_BOUNDS,
+					INVALID_ARG_SIZE,
+					CANT_CREATE
 					
 };
 
@@ -46,7 +52,7 @@ typedef struct 		s_op
 {
 	uint8_t 		op;
 	uint8_t			args_type_code[3];
-	uint8_t			args[3];
+	int8_t			args[3];
 	struct s_op		*next;
 }					t_op;
 
@@ -80,6 +86,10 @@ void 				add_operation(t_op **ops, t_op *elem);
 t_parser            *init_parser(char *path);
 t_op 				*init_operation();
 
+void 				write_to_file(t_parser *p, char *path);
+
+void 				free_allocated(t_parser *p);
+void 				display_collected(t_parser *p);
 void 				display_grid(uint8_t g[], unsigned size, int hl);
 void                display_error(int err);
 

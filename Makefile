@@ -23,6 +23,7 @@ LIB_FT = $(LIB_DIR)libft.a
 
 SRCS_DIR = srcs/
 SRCS_LIST =	main.c \
+			write_to_file.c\
 			dasm_parser.c init_parser.c\
 			display_helper.c
 
@@ -31,6 +32,7 @@ OBJ_LIST = $(SRCS_LIST:%.c=%.o)
 OBJECTS = $(addprefix $(OBJ_DIR), $(OBJ_LIST))
 
 all: $(NAME)
+	@echo > /dev/null
 
 $(NAME): $(LIB_FT) $(OBJ_DIR) $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -L $(LIB_DIR) -lft -o $(NAME)

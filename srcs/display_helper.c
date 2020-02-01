@@ -34,7 +34,7 @@ void 			display_collected(t_parser *p)
 	int 	i;
 	t_op 	*tmp;
 
-	ft_printf("%s: {blue}%s{eoc}\n", p->name, p->comment);
+	ft_printf("%s: %s\n", p->name, p->comment);
 	tmp = p->ops;
 	while (tmp)
 	{

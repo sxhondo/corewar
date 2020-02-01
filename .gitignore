@@ -1,1 +1,4 @@
 asm.dSYM
+.idea
+dasm.dSYM
+cmake-build-debug

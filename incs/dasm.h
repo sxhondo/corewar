@@ -30,7 +30,7 @@ static char         *errors[] =
 	"invalid type argument",
 	"invalid register argument",
 	"invalid size of argument",
-	"cannot create file, probably already exist"
+	"cannot create file"
 };
 
 enum errors 		{
@@ -47,6 +47,20 @@ enum errors 		{
 					CANT_CREATE
 					
 };
+
+typedef union 		s_octets
+{
+	uint8_t 		oct1 : 8;
+	uint8_t 		oct2 : 8;
+	uint8_t 		oct3 : 8;
+	uint8_t 		oct4 : 8;
+}					t_octets;
+
+typedef struct 		s_int32
+{
+	t_octets		*oct;
+	int32_t 		num;
+}					t_int32;
 
 typedef struct 		s_op
 {
@@ -65,8 +79,6 @@ typedef struct      s_parser
 	int 			pos;
 	t_op			*ops;
 }                   t_parser;
-
-
 
 typedef struct 		s_op_tab
 {

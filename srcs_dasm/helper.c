@@ -42,19 +42,19 @@ void 			display_collected(t_parser *p)
 		i = 0;
 		while (tmp->args_type_code[i] && i < 3)
 		{
-			if (tmp->args_type_code[i] == T_REG)
+			if (tmp->args_type_code[i] == REG_CODE)
 				ft_printf("T_REG \t");
-			if (tmp->args_type_code[i] == T_DIR)
+			if (tmp->args_type_code[i] == DIR_CODE)
 				ft_printf("T_DIR \t");
-			if (tmp->args_type_code[i] == T_IND)
-				ft_printf("T_IND \t");	
+			if (tmp->args_type_code[i] == IND_CODE)
+				ft_printf("T_IND \t");
 			i++;	
 		}
 		ft_printf("\n");
 		i = 0;
 		while (i < op_tab[tmp->op - 1].args_num)
 		{
-			ft_printf("%d\t", tmp->args[i]);
+			ft_printf("%d\t\t", tmp->args[i]);
 			i++;
 		}
 		ft_printf("\n---\n");

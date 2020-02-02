@@ -100,9 +100,13 @@ add_executable(corewar
         libft/srcs/ft_vectors.c
         libft/srcs/ft_vfprintf.c
         libft/srcs/get_next_line.c
-        srcs/dasm_parser.c
-        srcs/display_helper.c
-        srcs/init_parser.c
-        srcs/main.c
-        srcs/op.c
-        srcs/write_to_file.c)
+        srcs_dasm/dasm_parser.c
+        srcs_dasm/helper.c
+        srcs_dasm/init_dasm_parser.c
+        srcs_dasm/write_to_file.c
+#        srcs_dasm/dasm.c
+        incs/asm.h
+        srcs_asm/asm.c
+        srcs_asm/asm_parser.c
+        srcs_asm/init_asm_parser.c
+        )

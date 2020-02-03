@@ -5,7 +5,7 @@ static void		check_header(int fd)
 	uint8_t		b[4];
 	
 	if ((read(fd, &b, 4)) != 4)
-		display_error(INVALID_FILE);
+		d_error(INVALID_FILE);
 	// ft_printf("Header: %x%x%x%x\n", b[0], b[1], b[2], b[3]);
 	if (b[0] == 0u &&
 			b[1] == ((COREWAR_EXEC_MAGIC) >> 16u) &&
@@ -13,7 +13,7 @@ static void		check_header(int fd)
 					b[3] == (uint8_t)(COREWAR_EXEC_MAGIC))
 					return ;
 	else
-		display_error(INVALID_HEADER);				
+		d_error(INVALID_HEADER);
 }
 
 static char		*check_string(int fd, int type)
@@ -23,7 +23,7 @@ static char		*check_string(int fd, int type)
 	uint8_t		b[type];
 	
 	if ((read(fd, &b, type) != type))
-		display_error(INVALID_FILE);
+		d_error(INVALID_FILE);
 	k = 0;	
 	i = 0;
 	while (i < type)
@@ -36,7 +36,7 @@ static char		*check_string(int fd, int type)
 		i++;
 	}
 	if ((res = ft_strnew(k)) == NULL)
-		display_error(CANT_ALLOCATE);
+		d_error(CANT_ALLOCATE);
 	ft_strncat(res, (char *)b, k);
 	// ft_printf("\n---\n");
 	return (res);	
@@ -47,9 +47,9 @@ static void 		check_null(int fd)
 	uint8_t			b[4];
 
 	if ((read(fd, &b, 4) != 4))
-		display_error(INVALID_FILE);
+		d_error(INVALID_FILE);
 	if (b[0] || b[1] || b[2] || b[3])
-		display_error(INVALID_NULL);
+		d_error(INVALID_NULL);
 
 }
 
@@ -59,7 +59,7 @@ static unsigned 	check_exec_size(int fd)
 	uint8_t			b[4];
 
 	if ((read(fd, &b, 4) != 4))
-		display_error(INVALID_FILE);
+		d_error(INVALID_FILE);
 	tmp.octets.o1 = b[3];
 	tmp.octets.o2 = b[2];
 	tmp.octets.o3 = b[1];
@@ -77,7 +77,7 @@ static uint8_t		get_arg_size(uint8_t arg_type_code, uint8_t op)
 		return (IND_SIZE);
 	else
 	{
-		display_error(INVALID_ARG_SIZE);
+		d_error(INVALID_ARG_SIZE);
 		return (-1);
 	}
 }
@@ -131,7 +131,7 @@ static uint8_t		get_reg(const uint8_t code[], int pos)
 
 	ret = code[pos];
 	if (ret < 0x01 || ret > 0x10)
-		display_error(REGISTER_OUT_OF_BOUNDS);
+		d_error(REGISTER_OUT_OF_BOUNDS);
 	return (ret);
 }
 
@@ -153,7 +153,7 @@ static void			get_args_type(t_op *op, t_parser *p, const uint8_t code)
 				&& op->args_type_code[i] != REG_CODE
 					&& op->args_type_code[i] != DIR_CODE
 						&& op->args_type_code[i] != IND_CODE)
-				display_error(INVALID_TYPE_ARG);
+				d_error(INVALID_TYPE_ARG);
 		}
 		p->pos += 1;
 	}
@@ -191,14 +191,14 @@ static void 		check_exec_code(t_parser *p)
 	t_op			*elem;
 	
 	if ((read(p->fd, &b, p->exe_code_size)) != p->exe_code_size)
-		display_error(INVALID_FILE);
+		d_error(INVALID_FILE);
 	while (p->pos < p->exe_code_size)
 	{
 		elem = init_operation();
 		elem->op = b[p->pos++];
 		// ft_printf("(%s)\n", op_tab[elem->op - 1].name);
 		if (elem->op < 0x01 || elem->op > 0x10)
-			display_error(INVALID_OP_NAME);
+			d_error(INVALID_OP_NAME);
 		get_args_type(elem, p, b[p->pos]);
 		get_arguments(p, elem, b);
 		add_operation(&(p->ops), elem);
@@ -209,7 +209,7 @@ void				dasm_parser(char *path)
 {
     t_parser		*p;
 
-    p = init_parser(path);
+    p = init_dasm_parser(path);
 	check_header(p->fd);
 	p->name = check_string(p->fd, PROG_NAME_LENGTH);
 	check_null(p->fd);

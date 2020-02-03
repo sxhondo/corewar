@@ -68,7 +68,7 @@ void					write_to_file(t_parser *p, char *path);
 void					free_allocated(t_parser *p);
 void					display_collected(t_parser *p);
 void					display_grid(uint8_t g[], unsigned size, int hl);
-void					display_error(int err);
+void					d_error(int err);
 
 
 #endif

@@ -82,7 +82,7 @@ void 			display_grid(uint8_t g[], unsigned size, int hl)
 	ft_printf("\n---\n");
 }
 
-void            display_error(int num)
+void            d_error(int num)
 {
     ft_printf("error: ");
     ft_printf("%s\n", errors[num]);

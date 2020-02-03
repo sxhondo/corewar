@@ -21,9 +21,9 @@ t_parser         *init_dasm_parser(char *path)
     t_parser     *p;
 
     if ((p = ft_memalloc(sizeof(t_parser))) == NULL)
-        display_error(CANT_ALLOCATE);
+        d_error(CANT_ALLOCATE);
     if ((p->fd = open(path, O_RDONLY)) < 0)
-        display_error(CANT_OPEN);
+        d_error(CANT_OPEN);
 	p->ops = NULL;
 	p->pos = 0;
     return (p);
@@ -34,6 +34,6 @@ t_op 			*init_operation()
 	t_op 		*elem;
 
 	if ((elem = ft_memalloc(sizeof(t_op))) == NULL)
-		display_error(CANT_ALLOCATE);
+		d_error(CANT_ALLOCATE);
 	return (elem);
 }

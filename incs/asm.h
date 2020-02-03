@@ -17,7 +17,12 @@ static char         *errors[] =
 				"invalid type argument",
 				"invalid register argument",
 				"invalid size of argument",
-				"cannot create file"
+				"cannot create file",
+				"invalid syntax",
+				"end of file reached",
+				".name or .comment specified twice",
+				"len of .name or .comment is too big",
+				"no new line between .name and .comment"
 		};
 
 enum errors 		{
@@ -31,28 +36,44 @@ enum errors 		{
 	INVALID_TYPE_ARG,
 	REGISTER_OUT_OF_BOUNDS,
 	INVALID_ARG_SIZE,
-	CANT_CREATE
-
+	CANT_CREATE,
+	SYNTAX_ERROR,
+	EOF,
+	DUPL_NAME_COMMENT,
+	BIG_NAME_COMMENT,
+	NO_NEW_LINE
 };
 
 typedef struct      s_asm_parser
 {
 	t_vec           *file;
+	char 			*f_data;
 	int             fd;
 	char            *name;
 	char            *comment;
-	unsigned        lc_total;
+	int 			pos;
+	unsigned 		row;
+	unsigned 		col;
 
 }                   t_asm_parser;
 
+
 void				asm_parser(char *path);
+void 				skip_empty_space(t_asm_parser *p);
 
+/*
+**	string_parser.c
+*/
+void 				get_comment_name(t_asm_parser *p);
 
-t_asm_parser		*init_parser(char *path);
+/*
+**	init_asm_parser.c
+*/
+t_asm_parser		*init_asm_parser(char *path);
 /*
 **	helper.c
 */
-void				display_error(int num);
+void				asm_error(int num, unsigned row, unsigned col);
 
 typedef struct 		s_op_tab
 {

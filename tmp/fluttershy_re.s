@@ -1,6 +1,15 @@
 .name "fluttershy"
 .comment "oh, my, what a scary project"
 
+fork %144
+st r1, 6
+live %42
+fork %369
+st r1, 6
+live %42
+fork %241
+st r1, 6
+live %213904
 fork %-5
 sti r1, %52, %1
 st r1, 6

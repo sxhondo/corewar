@@ -41,7 +41,7 @@ ASM = 				asm
 ASM_INC = 			$(INC_DIR)asm.h
 ASM_SRCS_DIR = 		srcs_asm/
 ASM_SRCS_LIST =		asm.c \
-					asm_parser.c display_helper.c\
+					asm_parser.c helper.c \
 					init_asm_parser.c\
 
 ASM_OBJ_LIST = 		$(ASM_SRCS_LIST:%.c=%.o)

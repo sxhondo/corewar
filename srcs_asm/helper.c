@@ -12,11 +12,10 @@
 
 #include "asm.h"
 
-void            display_error(int num, unsigned row, unsigned col)
+void            asm_error(int num, unsigned row, unsigned col)
 {
-    ft_printf("error: ");
-    if (row != 0 && col != 0)
-        ft_printf("[%d][%d]: ", row, col);
-    ft_printf("%s\n", errors[num]);
-    exit (num);
+	ft_fprintf(2, "error: ");
+	ft_fprintf(2, "[%d][%d] ", row, col);
+    ft_fprintf(2, "%s\n", errors[num]);
+    exit (1);
 }

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "asm.h"
+#include <asm.h>
 
 static int		check_ext(char *path)
 {
@@ -30,6 +30,6 @@ int				main(int ac, char **av)
 		asm_parser(av[1]);
 	}
 	else
-		display_error(BAD_ARGUMENT);
+		asm_error(BAD_ARGUMENT, 0, 0);
 	return (0);
 }

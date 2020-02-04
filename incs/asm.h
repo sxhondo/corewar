@@ -1,5 +1,5 @@
-#ifndef ASSEMBLER_H
-#define ASSEMBLER_H
+#ifndef ASM_H
+#define ASM_H
 
 #include "op.h"
 #include "libft.h"
@@ -22,7 +22,11 @@ static char         *errors[] =
 				"end of file reached",
 				".name or .comment specified twice",
 				"len of .name or .comment is too big",
-				"no new line between .name and .comment"
+				"no new line between .name and .comment",
+				"no new line between labels",
+				"instruction does not exist",
+				"this instruction does not accept such arguments",
+				"number not well formatted"
 		};
 
 enum errors 		{
@@ -41,7 +45,11 @@ enum errors 		{
 	EOF,
 	DUPL_NAME_COMMENT,
 	BIG_NAME_COMMENT,
-	NO_NEW_LINE
+	NO_NEW_LINE_NAME,
+	NO_NEW_LINE_LABEL,
+	BAD_INSTRUCTION,
+	WRONG_ARGUMENT,
+	BAD_NUM
 };
 
 typedef struct      s_asm_parser
@@ -57,9 +65,38 @@ typedef struct      s_asm_parser
 
 }                   t_asm_parser;
 
+typedef struct 		s_ins
+{
+	int 			code;
+	uint8_t 		args_type_code[3];
+	int32_t 		args[3];
+	unsigned 		total_size;
+
+}					t_ins;
+
+typedef struct 			s_label
+{
+	char 	 			*lab;
+	t_ins				*in;
+	unsigned			row;
+	unsigned 			col;
+	struct s_label		*next;
+}						t_label;
+
 
 void				asm_parser(char *path);
-void 				skip_empty_space(t_asm_parser *p);
+
+/*
+**	s_labels.c
+*/
+t_label 			*init_label(char *str, int len, t_asm_parser *p);
+void				add_label(t_label **dst, t_label *elem);
+void 				print_label(t_label *l);
+/*
+**	skipers.c
+*/
+void 				skip_tab_space(t_asm_parser *p);
+int 				skip_empty_space(t_asm_parser *p);
 
 /*
 **	string_parser.c
@@ -74,6 +111,8 @@ t_asm_parser		*init_asm_parser(char *path);
 **	helper.c
 */
 void				asm_error(int num, unsigned row, unsigned col);
+int					core_atoi(const char *str, int *num, t_asm_parser *p);
+
 
 typedef struct 		s_op_tab
 {
@@ -95,7 +134,6 @@ static t_op_tab		op_tab[] =
 /* args_t_code*/	0,
 /* args_types */	{T_DIR, 0, 0},
 /* T_DIR size */	4
-
 				},
 				{
 /* code */			0x02,
@@ -104,8 +142,6 @@ static t_op_tab		op_tab[] =
 /* args_t_code*/	1,
 /* args_types */	{T_DIR | T_IND, T_REG, 0},
 /* T_DIR size */	4
-
-
 				},
 				{
 /* code */			0x03,
@@ -114,8 +150,6 @@ static t_op_tab		op_tab[] =
 /* args_t_code*/	1,
 /* args_types */	{T_REG, T_REG | T_IND, 0},
 /* T_DIR size */	4
-
-
 				},
 				{
 /* code */			0x04,

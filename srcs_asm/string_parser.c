@@ -1,17 +1,5 @@
 #include "asm.h"
 
-static void 		skip_tab_space(t_asm_parser *p)
-{
-	while (p->f_data[p->pos] &&
-		(p->f_data[p->pos] == '\t' || p->f_data[p->pos] == ' '))
-	{
-		p->pos += 1;
-		p->col += 1;
-	}
-	if (p->pos == p->file->total - 1)
-		asm_error(EOF, p->row, p->col);
-}
-
 static void 		get_string(t_asm_parser *p, char **dst, char type)
 {
 	int 			i;
@@ -51,7 +39,7 @@ void 				get_comment_name(t_asm_parser *p)
 		{
 			skip_empty_space(p);
 			if (save == p->row)
-				asm_error(NO_NEW_LINE, p->row, p->col);
+				asm_error(NO_NEW_LINE_NAME, p->row, p->col);
 			if (p->f_data[p->pos++] != '.')
 				asm_error(SYNTAX_ERROR, p->row, p->col);
 			if (ft_strnequ(p->f_data + p->pos, "name", 4))

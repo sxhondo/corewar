@@ -1,13 +1,5 @@
 #include <asm.h>
 
-void 			print_label(t_label *l)
-{
-	while (l)
-	{
-		ft_printf("[%s] %d : %d\n", l->lab, l->row, l->col);
-		l = l->next;
-	}
-}
 
 void			add_label(t_label **dst, t_label *elem)
 {

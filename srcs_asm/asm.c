@@ -30,6 +30,6 @@ int				main(int ac, char **av)
 		asm_parser(av[1]);
 	}
 	else
-		asm_error(BAD_ARGUMENT, 0, 0);
+		asm_error(BAD_ARGUMENT_FILE, 0, 0);
 	return (0);
 }

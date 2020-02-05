@@ -7,7 +7,8 @@
 
 static char         *errors[] =
 		{
-				"invalid argument",
+				"invalid file-argument",
+				"invalid arguments",
 				"invalid file",
 				"cannot allocate memory",
 				"cannot open file",
@@ -22,15 +23,13 @@ static char         *errors[] =
 				"end of file reached",
 				".name or .comment specified twice",
 				"len of .name or .comment is too big",
-				"no new line between .name and .comment",
-				"no new line between labels",
 				"instruction does not exist",
-				"this instruction does not accept such arguments",
-				"number not well formatted"
+				"number not well formatted",
 		};
 
 enum errors 		{
-	BAD_ARGUMENT,
+	BAD_ARGUMENT_FILE,
+	INVALID_ARGUMENT,
 	INVALID_FILE,
 	CANT_ALLOCATE,
 	CANT_OPEN,
@@ -41,15 +40,12 @@ enum errors 		{
 	REGISTER_OUT_OF_BOUNDS,
 	INVALID_ARG_SIZE,
 	CANT_CREATE,
-	SYNTAX_ERROR,
+	INVALID_SYNTAX,
 	EOF,
 	DUPL_NAME_COMMENT,
-	BIG_NAME_COMMENT,
-	NO_NEW_LINE_NAME,
-	NO_NEW_LINE_LABEL,
+	STR_TOO_BIG,
 	BAD_INSTRUCTION,
-	WRONG_ARGUMENT,
-	BAD_NUM
+	INVALID_NUM,
 };
 
 typedef struct      s_asm_parser
@@ -59,7 +55,7 @@ typedef struct      s_asm_parser
 	int             fd;
 	char            *name;
 	char            *comment;
-	int 			pos;
+	size_t			pos;
 	unsigned 		row;
 	unsigned 		col;
 
@@ -68,16 +64,21 @@ typedef struct      s_asm_parser
 typedef struct 		s_ins
 {
 	int 			code;
-	uint8_t 		args_type_code[3];
 	int32_t 		args[3];
+	char 			*largs[3];
+	struct s_label 	*labels;
+	unsigned		row;
+	unsigned 		col;
 	unsigned 		total_size;
+	struct s_ins 	*next;
+	struct s_ins 	*prev;
 
 }					t_ins;
 
 typedef struct 			s_label
 {
 	char 	 			*lab;
-	t_ins				*in;
+	struct s_ins		*in;
 	unsigned			row;
 	unsigned 			col;
 	struct s_label		*next;
@@ -86,17 +87,39 @@ typedef struct 			s_label
 
 void				asm_parser(char *path);
 
+
+/*
+**	ins_parser.c
+*/
+void 				ins_parser(t_asm_parser *p, t_label *lab, t_ins **ins);
+
+
+/*
+**	label_parser.c
+*/
+int 				is_label_char(char ch);
+t_label 			*label_parser(t_asm_parser *p);
+
+/*
+**	s_ins.c
+*/
+t_ins 				*init_ins(char *name, unsigned row, unsigned col);
+void 				push_back_ins(t_ins **dst, t_ins *elem);
+
 /*
 **	s_labels.c
 */
 t_label 			*init_label(char *str, int len, t_asm_parser *p);
 void				add_label(t_label **dst, t_label *elem);
 void 				print_label(t_label *l);
+
 /*
 **	skipers.c
 */
+int 				is_num(char c);
 void 				skip_tab_space(t_asm_parser *p);
 int 				skip_empty_space(t_asm_parser *p);
+void 				skip_separator(t_asm_parser *p, t_ins *elem, int a);
 
 /*
 **	string_parser.c
@@ -107,11 +130,14 @@ void 				get_comment_name(t_asm_parser *p);
 **	init_asm_parser.c
 */
 t_asm_parser		*init_asm_parser(char *path);
+
 /*
 **	helper.c
 */
 void				asm_error(int num, unsigned row, unsigned col);
 int					core_atoi(const char *str, int *num, t_asm_parser *p);
+void 				print_collected(t_ins *ins);
+void 				free_all(t_asm_parser *p, t_ins *ins);
 
 
 typedef struct 		s_op_tab

@@ -2,6 +2,7 @@
 .comment "I'M ALIIIIVE"
 
 lab:
-	live %0
+	live	%32768
+	st		r2, 32768
 
-zjmp %:label1
+zjmp %:lab

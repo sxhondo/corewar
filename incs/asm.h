@@ -8,7 +8,6 @@
 static char         *errors[] =
 		{
 				"invalid file-argument",
-				"invalid arguments",
 				"invalid file",
 				"cannot allocate memory",
 				"cannot open file",
@@ -19,17 +18,11 @@ static char         *errors[] =
 				"invalid register argument",
 				"invalid size of argument",
 				"cannot create file",
-				"invalid syntax",
-				"end of file reached",
-				".name or .comment specified twice",
-				"len of .name or .comment is too big",
-				"instruction does not exist",
-				"number not well formatted",
+				"champions name is too big"
 		};
 
 enum errors 		{
 	BAD_ARGUMENT_FILE,
-	INVALID_ARGUMENT,
 	INVALID_FILE,
 	CANT_ALLOCATE,
 	CANT_OPEN,
@@ -40,17 +33,45 @@ enum errors 		{
 	REGISTER_OUT_OF_BOUNDS,
 	INVALID_ARG_SIZE,
 	CANT_CREATE,
-	INVALID_SYNTAX,
-	EOF,
-	DUPL_NAME_COMMENT,
-	STR_TOO_BIG,
-	BAD_INSTRUCTION,
-	INVALID_NUM,
+	STR_TOO_BIG
 };
+
+static char 		*tokens[] =
+		{
+			"NEW_LINE",
+			"NAME",
+			"COMMENT",
+			"LABEL",
+			"INSTRUCTION",
+			"DIRECT",
+			"INDERECT",
+			"REGISTER"
+		};
+
+enum tokens			{
+	NL,
+	NAME,
+	COMMENT,
+	LABEL,
+	INSTRUCTION,
+	DIRECT,
+	INDIRECT,
+	REGISTER
+};
+
+typedef struct 		s_lex
+{
+	char 			*lex;
+	uint8_t 		type;
+	unsigned 		row;
+	unsigned 		col;
+	struct s_lex 	*next;
+}					t_lex;
 
 typedef struct      s_asm_parser
 {
 	t_vec           *file;
+	t_lex 			*lex;
 	char 			*f_data;
 	int             fd;
 	char            *name;
@@ -61,83 +82,38 @@ typedef struct      s_asm_parser
 
 }                   t_asm_parser;
 
-typedef struct 		s_ins
-{
-	int 			code;
-	int32_t 		args[3];
-	char 			*largs[3];
-	struct s_label 	*labels;
-	unsigned		row;
-	unsigned 		col;
-	unsigned 		total_size;
-	struct s_ins 	*next;
-	struct s_ins 	*prev;
-
-}					t_ins;
-
-typedef struct 			s_label
-{
-	char 	 			*lab;
-	struct s_ins		*in;
-	unsigned			row;
-	unsigned 			col;
-	struct s_label		*next;
-}						t_label;
 
 
 void				asm_parser(char *path);
 
 
-/*
-**	ins_parser.c
-*/
-void 				ins_parser(t_asm_parser *p, t_label *lab, t_ins **ins);
-
-
-/*
-**	label_parser.c
-*/
-int 				is_label_char(char ch);
-t_label 			*label_parser(t_asm_parser *p);
-
-/*
-**	s_ins.c
-*/
-t_ins 				*init_ins(char *name, unsigned row, unsigned col);
-void 				push_back_ins(t_ins **dst, t_ins *elem);
-
-/*
-**	s_labels.c
-*/
-t_label 			*init_label(char *str, int len, t_asm_parser *p);
-void				add_label(t_label **dst, t_label *elem);
-void 				print_label(t_label *l);
+void 				push_lexeme(t_lex **dst, int type, char *lex, t_asm_parser *p);
 
 /*
 **	skipers.c
 */
 int 				is_num(char c);
-void 				skip_tab_space(t_asm_parser *p);
-int 				skip_empty_space(t_asm_parser *p);
-void 				skip_separator(t_asm_parser *p, t_ins *elem, int a);
-
-/*
-**	string_parser.c
-*/
-void 				get_comment_name(t_asm_parser *p);
-
-/*
-**	init_asm_parser.c
-*/
-t_asm_parser		*init_asm_parser(char *path);
+int 				is_lowcase_alpha(char c);
+void 				cursor_right_shift(t_asm_parser *p);
 
 /*
 **	helper.c
 */
-void				asm_error(int num, unsigned row, unsigned col);
-int					core_atoi(const char *str, int *num, t_asm_parser *p);
-void 				print_collected(t_ins *ins);
-void 				free_all(t_asm_parser *p, t_ins *ins);
+void 				print_tokens(t_lex *l);
+void 				free_all(t_asm_parser *p, t_lex *lex);
+
+/*
+**	init.c
+*/
+t_asm_parser		*init_asm_parser(char *path);
+t_lex				*init_lexer();
+
+/*
+**	errors.c
+*/
+void 				common_error(int num);
+void 				lexical_error(unsigned row, unsigned col);
+
 
 
 typedef struct 		s_op_tab

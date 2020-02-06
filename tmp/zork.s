@@ -2,7 +2,7 @@
 .comment "I'M ALIIIIVE"
 
 lab:
+la1:
 	live	%32768
-	st		r2, 32768
 
-zjmp %:lab
+zjmp %:la1

@@ -18,7 +18,6 @@ static char         *errors[] =
 				"invalid register argument",
 				"invalid size of argument",
 				"cannot create file",
-				"champions name is too big"
 		};
 
 enum errors 		{
@@ -33,30 +32,29 @@ enum errors 		{
 	REGISTER_OUT_OF_BOUNDS,
 	INVALID_ARG_SIZE,
 	CANT_CREATE,
-	STR_TOO_BIG
 };
 
 static char 		*tokens[] =
 		{
 			"NEW_LINE",
-			"NAME",
-			"COMMENT",
+			"STRING",
 			"LABEL",
 			"INSTRUCTION",
 			"DIRECT",
-			"INDERECT",
-			"REGISTER"
+			"INDIRECT",
+			"REGISTER",
+			"SEPARATOR"
 		};
 
 enum tokens			{
 	NL,
-	NAME,
-	COMMENT,
+	STRING,
 	LABEL,
 	INSTRUCTION,
 	DIRECT,
 	INDIRECT,
-	REGISTER
+	REGISTER,
+	SEPARATOR
 };
 
 typedef struct 		s_lex
@@ -77,24 +75,28 @@ typedef struct      s_asm_parser
 	char            *name;
 	char            *comment;
 	size_t			pos;
-	unsigned 		row;
-	unsigned 		col;
+	size_t 			row;
+	size_t 			col;
 
 }                   t_asm_parser;
 
-
-
 void				asm_parser(char *path);
 
+/*
+**	lexer.c
+*/
+void 				parse_expressions(t_asm_parser *p);
 
-void 				push_lexeme(t_lex **dst, int type, char *lex, t_asm_parser *p);
+
+void 				push_lexeme(t_asm_parser *p, int type, char *lex);
 
 /*
 **	skipers.c
 */
 int 				is_num(char c);
-int 				is_lowcase_alpha(char c);
-void 				cursor_right_shift(t_asm_parser *p);
+int 				is_valid_instruction(char *name);
+int 				is_label_char(char c);
+int 				skip_void(t_asm_parser *p);
 
 /*
 **	helper.c
@@ -106,7 +108,6 @@ void 				free_all(t_asm_parser *p, t_lex *lex);
 **	init.c
 */
 t_asm_parser		*init_asm_parser(char *path);
-t_lex				*init_lexer();
 
 /*
 **	errors.c

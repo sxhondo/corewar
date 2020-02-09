@@ -41,8 +41,9 @@ ASM = 				asm
 ASM_INC = 			$(INC_DIR)asm.h
 ASM_SRCS_DIR = 		srcs_asm/
 ASM_SRCS_LIST =		asm.c \
-					asm_parser.c helper.c \
-					init_asm_parser.c skipers.c\
+					asm_parser.c lexer.c\
+					s_lex_utils.c helper.c skipers.c\
+					init.c error.c\
 
 ASM_OBJ_LIST = 		$(ASM_SRCS_LIST:%.c=%.o)
 ASM_OBJECTS = 		$(addprefix $(OBJ_DIR), $(ASM_OBJ_LIST))

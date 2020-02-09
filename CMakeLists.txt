@@ -109,4 +109,4 @@ add_executable(corewar
         srcs_asm/asm.c
         srcs_asm/asm_parser.c
         srcs_asm/helper.c
-        srcs_asm/skipers.c srcs_asm/label_parser.c srcs_asm/error.c srcs_asm/init.c srcs_asm/s_lex.c)
+        srcs_asm/skipers.c srcs_asm/error.c srcs_asm/init.c srcs_asm/s_lex_utils.c srcs_asm/lexer.c)

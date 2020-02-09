@@ -27,9 +27,9 @@ t_asm_parser			*init_asm_parser(char *path)
 	if ((p->fd = open(path, O_RDONLY)) < 0)
 		common_error(CANT_OPEN);
 	p->file = vec_read(p->fd);
-	p->row = 1;
-	p->col = 0;
 	p->f_data = p->file->data;
+	p->row = 0;
+	p->col = 0;
 	p->pos = 0;
 	return (p);
 }

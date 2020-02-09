@@ -16,15 +16,20 @@ static t_lex	*init_lex(int type, char *lex, t_asm_parser *p)
 	return (l);
 }
 
-void 			push_lexeme(t_lex **dst, int type, char *lex, t_asm_parser *p)
+void 			push_lexeme(t_asm_parser *p, int type, char *lex)
 {
 	t_lex		*tmp;
 	t_lex		*l;
 
 	l = init_lex(type, lex, p);
-	tmp = *dst;
-	if (!*dst)
-		*dst = l;
+	if (type == NL)
+	{
+		p->col = 0;
+		p->row += 1;
+	}
+	tmp = p->lex;
+	if (!p->lex)
+		p->lex = l;
 	else
 	{
 		while (tmp->next)

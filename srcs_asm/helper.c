@@ -14,11 +14,15 @@
 
 void 					print_tokens(t_lex *l)
 {
-	for (t_lex *tmp = l; tmp; tmp = tmp->next)
+	t_lex 				*tmp;
+
+	tmp = l;
+	while (tmp)
 	{
-		ft_printf("%d : %d \t", tmp->row, tmp->col);
-		ft_printf("[%s] ", tokens[tmp->type]);
+		ft_printf("%3d : %3d \t", tmp->row + 1, tmp->col + 1);
+		ft_printf("{red}[%s]{eoc} ", tokens[tmp->type]);
 		ft_printf("%s\n", tmp->lex);
+		tmp = tmp->next;
 	}
 }
 

@@ -5,6 +5,25 @@
 #include "libft.h"
 #include "ft_printf.h"
 
+typedef union 			s_int32
+{
+	struct
+	{
+		uint8_t 		o1 : 8;
+		uint8_t 		o2 : 8;
+		uint8_t 		o3 : 8;
+		uint8_t 		o4 : 8;
+	}					octets;
+	struct
+	{
+		uint8_t 		b1 : 2;
+		uint8_t 		b2 : 2;
+		uint8_t 		b3 : 2;
+		uint8_t 		b4 : 2;
+	}					bin;
+	int32_t 			num;
+}						t_int32;
+
 static char         *errors[] =
 		{
 				"invalid file-argument",
@@ -18,6 +37,8 @@ static char         *errors[] =
 				"invalid register argument",
 				"invalid size of argument",
 				"cannot create file",
+				"name is too big",
+				"comment is too big"
 		};
 
 enum errors 		{
@@ -32,6 +53,8 @@ enum errors 		{
 	REGISTER_OUT_OF_BOUNDS,
 	INVALID_ARG_SIZE,
 	CANT_CREATE,
+	NAME_TOO_BIG,
+	COMM_TOO_BIG
 };
 
 static char 		*tokens[] =
@@ -43,7 +66,11 @@ static char 		*tokens[] =
 			"DIRECT",
 			"INDIRECT",
 			"REGISTER",
-			"SEPARATOR"
+			"SEPARATOR",
+			"COMMAND",
+			"EOF",
+			"DIRECT_LABEL",
+			"INDERECT_LABEL"
 		};
 
 enum tokens			{
@@ -54,8 +81,21 @@ enum tokens			{
 	DIRECT,
 	INDIRECT,
 	REGISTER,
-	SEPARATOR
+	SEPARATOR,
+	COMMAND,
+	EOF,
+	DIRECT_LABEL,
+	INDIRECT_LABEL,
 };
+
+typedef struct 		s_lab
+{
+	char 			*name;
+	size_t 			row;
+	size_t 			col;
+	size_t			code_pos;
+	struct s_lab 	*next;
+}					t_lab;
 
 typedef struct 		s_lex
 {
@@ -69,8 +109,11 @@ typedef struct 		s_lex
 typedef struct      s_asm_parser
 {
 	t_vec           *file;
+	t_vec 			*code;
 	t_lex 			*lex;
+	t_lab 			*lab;
 	char 			*f_data;
+	char 			*c_data;
 	int             fd;
 	char            *name;
 	char            *comment;
@@ -80,29 +123,54 @@ typedef struct      s_asm_parser
 
 }                   t_asm_parser;
 
+typedef struct 		s_op_tab
+{
+	uint8_t			code;
+	char			*name;
+	uint8_t			args_num;
+	uint8_t			args_type_code;
+	uint8_t			args_types[3];
+	uint8_t			t_dir_size;
+}					t_op_tab;
+
 void				asm_parser(char *path);
 
+/*
+**	converters.c
+*/
+void 				int32_converter(t_asm_parser *p, unsigned size, t_int32 k);
+void 				args_type_converter(t_lex *lx, t_op_tab o, t_asm_parser *p);
 /*
 **	lexer.c
 */
 void 				parse_expressions(t_asm_parser *p);
 
+/*
+**	s_lab_utils.c
+*/
+void 				push_label(t_asm_parser *p, t_lex *lx);
 
+/*
+**	s_lex_utils.c
+*/
 void 				push_lexeme(t_asm_parser *p, int type, char *lex);
 
 /*
 **	skipers.c
 */
+int 				is_whitespace(char c);
 int 				is_num(char c);
-int 				is_valid_instruction(char *name);
+int 				get_operator(char *name);
 int 				is_label_char(char c);
 int 				skip_void(t_asm_parser *p);
 
 /*
 **	helper.c
 */
+void 				print_labels(t_lab *l);
 void 				print_tokens(t_lex *l);
-void 				free_all(t_asm_parser *p, t_lex *lex);
+void 				free_all(t_asm_parser *p);
+int32_t				core_atoi(const char *str, t_lex *lx);
 
 /*
 **	init.c
@@ -114,18 +182,10 @@ t_asm_parser		*init_asm_parser(char *path);
 */
 void 				common_error(int num);
 void 				lexical_error(unsigned row, unsigned col);
+void 				token_error(t_lex *lx);
+void 				argument_error(t_lex *lx, char *op);
 
 
-
-typedef struct 		s_op_tab
-{
-	uint8_t			code;
-	char			*name;
-	uint8_t			args_num;
-	uint8_t			args_type_code;
-	uint8_t			args_types[3];
-	uint8_t			t_dir_size;
-}					t_op_tab;
 
 
 static t_op_tab		op_tab[] =

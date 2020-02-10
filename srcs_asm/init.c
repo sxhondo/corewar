@@ -28,6 +28,9 @@ t_asm_parser			*init_asm_parser(char *path)
 		common_error(CANT_OPEN);
 	p->file = vec_read(p->fd);
 	p->f_data = p->file->data;
+	if (!(p->code = ft_vec_init(1, sizeof(char))))
+		common_error(CANT_ALLOCATE);
+	p->c_data = p->code->data;
 	p->row = 0;
 	p->col = 0;
 	p->pos = 0;

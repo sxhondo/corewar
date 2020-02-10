@@ -33,25 +33,6 @@ typedef struct			s_parser
 	t_op				*ops;
 }                   	t_parser;
 
-typedef union 			s_int32
-{
-	struct
-	{
-		uint8_t 		o1 : 8;
-		uint8_t 		o2 : 8;
-		uint8_t 		o3 : 8;
-		uint8_t 		o4 : 8;
-	}					octets;
-	struct
-	{
-		uint8_t 		b1 : 2;
-		uint8_t 		b2 : 2;
-		uint8_t 		b3 : 2;
-		uint8_t 		b4 : 2;
-	}					bin;
-	int32_t 			num;
-}						t_int32;
-
 void                	dasm_parser(char *path);
 
 void 					add_operation(t_op **ops, t_op *elem);

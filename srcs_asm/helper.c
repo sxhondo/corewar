@@ -12,62 +12,70 @@
 
 #include "asm.h"
 
-void 					print_tokens(t_lex *l)
+void 					print_labels(t_lab *l)
 {
-	t_lex 				*tmp;
-
-	tmp = l;
-	while (tmp)
+	while (l)
 	{
-		ft_printf("%3d : %3d \t", tmp->row + 1, tmp->col + 1);
-		ft_printf("{red}[%s]{eoc} ", tokens[tmp->type]);
-		ft_printf("%s\n", tmp->lex);
-		tmp = tmp->next;
+		ft_printf("%d:%d {yellow}%s{eoc}\n", l->row + 1, l->col + 1,
+				l->name);
+		l = l->next;
 	}
 }
 
-void 					free_all(t_asm_parser *p, t_lex *lex)
+void 					print_tokens(t_lex *l)
 {
-	t_lex				*l;
-	t_lex				*next;
-
-	l = lex;
 	while (l)
 	{
-		next = l->next;
-		ft_strdel(&l->lex);
-		free(l);
-		l = next;
+		ft_printf("%3d : %3d \t", l->row + 1, l->col + 1);
+		ft_printf("{red}[%s]{eoc} ", tokens[l->type]);
+		ft_printf("%s\n", l->lex);
+		l = l->next;
 	}
-	close(p->fd);
-	ft_strdel(&(p->name));
-	ft_strdel(&(p->comment));
+}
+
+void 					free_all(t_asm_parser *p)
+{
+	t_lab				*nex;
+	t_lex				*next;
+
+	while (p->lex)
+	{
+		next = p->lex->next;
+		ft_strdel(&p->lex->lex);
+		free(p->lex);
+		p->lex = next;
+	}
+	while (p->lab)
+	{
+		nex = p->lab->next;
+		free(p->lab);
+		p->lab = nex;
+	}
+	ft_vec_del(&(p->code));
 	ft_vec_del(&(p->file));
+	close(p->fd);
 	free(p);
 }
 
-//int						core_atoi(const char *str, int *num, t_asm_parser *p)
-//{
-//	int					sign;
-//	long				res;
-//	int					i;
-//
-//	i = 0;
-//	res = 0;
-//	sign = 1;
-//	if ((*str == '-' || *str == '+') && ++i)
-//		sign = *str++ == '-' ? -1 : 1;
-//	if (!ft_isdigit(*str))
-//		asm_error(INVALID_NUM, p->row, p->col);
-//	while (*str && ft_isdigit(*str) && ++i)
-//	{
-//		if (!*str || *str < '0' || *str > '9')
-//			asm_error(INVALID_NUM, p->row, p->col);
-//		res = res * 10 + (*str++ - '0');
-//		if ((sign == 1 && res > INT32_MAX)
-//			|| (sign == -1 && res - 2 >= INT32_MAX))
-//			asm_error(INVALID_NUM, p->row, p->col);
-//	}
-//	*num = (int)(res * sign);
-//	return (i);
-//}
+int32_t					core_atoi(const char *str, t_lex *lx)
+{
+	int					sign;
+	int32_t 			res;
+
+	res = 0;
+	sign = 1;
+	if ((*str == '-' || *str == '+'))
+		sign = *str++ == '-' ? -1 : 1;
+	if (!ft_isdigit(*str))
+		lexical_error(lx->row, lx->col);
+	while (*str && ft_isdigit(*str))
+	{
+		if (!*str || *str < '0' || *str > '9')
+			lexical_error(lx->row, lx->col);
+		res = res * 10 + (*str++ - '0');
+		if ((sign == 1 && res > INT32_MAX)
+			|| (sign == -1 && res - 2 >= INT32_MAX))
+			lexical_error(lx->row, lx->col);
+	}
+	return ((int32_t)(res * sign));
+}

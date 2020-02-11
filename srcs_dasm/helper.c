@@ -62,7 +62,7 @@ void 			display_collected(t_parser *p)
 	}
 }
 
-void 			display_grid(uint8_t g[], unsigned size, int hl)
+void 			display_grid(uint8_t g[], unsigned size, size_t hl)
 {
 	int 		q;
 

@@ -1,61 +1,7 @@
 #ifndef ASM_H
 #define ASM_H
 
-#include "op.h"
-#include "libft.h"
-#include "ft_printf.h"
-
-typedef union 			s_int32
-{
-	struct
-	{
-		uint8_t 		o1 : 8;
-		uint8_t 		o2 : 8;
-		uint8_t 		o3 : 8;
-		uint8_t 		o4 : 8;
-	}					octets;
-	struct
-	{
-		uint8_t 		b1 : 2;
-		uint8_t 		b2 : 2;
-		uint8_t 		b3 : 2;
-		uint8_t 		b4 : 2;
-	}					bin;
-	int32_t 			num;
-}						t_int32;
-
-static char         *errors[] =
-		{
-				"invalid file-argument",
-				"invalid file",
-				"cannot allocate memory",
-				"cannot open file",
-				"invalid header",
-				"invalid NULL",
-				"invalid operation name",
-				"invalid type argument",
-				"invalid register argument",
-				"invalid size of argument",
-				"cannot create file",
-				"name is too big",
-				"comment is too big"
-		};
-
-enum errors 		{
-	BAD_ARGUMENT_FILE,
-	INVALID_FILE,
-	CANT_ALLOCATE,
-	CANT_OPEN,
-	INVALID_HEADER,
-	INVALID_NULL,
-	INVALID_OP_NAME,
-	INVALID_TYPE_ARG,
-	REGISTER_OUT_OF_BOUNDS,
-	INVALID_ARG_SIZE,
-	CANT_CREATE,
-	NAME_TOO_BIG,
-	COMM_TOO_BIG
-};
+#include "general.h"
 
 static char 		*tokens[] =
 		{
@@ -93,9 +39,18 @@ typedef struct 		s_lab
 	char 			*name;
 	size_t 			row;
 	size_t 			col;
-	size_t			code_pos;
+	int32_t			code_pos;
 	struct s_lab 	*next;
 }					t_lab;
+
+typedef struct 		s_ref
+{
+	size_t 			pos;
+	int32_t 		size;
+	char 			*name;
+	int 			on;
+	struct s_ref 	*next;
+}					t_ref;
 
 typedef struct 		s_lex
 {
@@ -109,11 +64,11 @@ typedef struct 		s_lex
 typedef struct      s_asm_parser
 {
 	t_vec           *file;
-	t_vec 			*code;
+	struct s_vec	*code;
 	t_lex 			*lex;
 	t_lab 			*lab;
+	t_ref 			*ref;
 	char 			*f_data;
-	char 			*c_data;
 	int             fd;
 	char            *name;
 	char            *comment;
@@ -123,32 +78,30 @@ typedef struct      s_asm_parser
 
 }                   t_asm_parser;
 
-typedef struct 		s_op_tab
-{
-	uint8_t			code;
-	char			*name;
-	uint8_t			args_num;
-	uint8_t			args_type_code;
-	uint8_t			args_types[3];
-	uint8_t			t_dir_size;
-}					t_op_tab;
-
 void				asm_parser(char *path);
 
 /*
-**	converters.c
+**	int_converters.c
 */
-void 				int32_converter(t_asm_parser *p, unsigned size, t_int32 k);
-void 				args_type_converter(t_lex *lx, t_op_tab o, t_asm_parser *p);
+void 				int32_converter(t_asm_parser *p, unsigned size, t_int32 k, size_t start);
+void 				write_arguments(const uint8_t atypes[], const int32_t arg[],
+												t_asm_parser *p, t_op_tab op);
 /*
 **	lexer.c
 */
 void 				parse_expressions(t_asm_parser *p);
 
 /*
+**	s_ref_utils.c
+*/
+void 				restore_ref(t_asm_parser *p, t_ref *ref);
+void 				push_ref(t_asm_parser *p, int32_t size, char *name);
+
+/*
 **	s_lab_utils.c
 */
 void 				push_label(t_asm_parser *p, t_lex *lx);
+int32_t 			find_label_diff(t_lab *lab, char *search, size_t pos);
 
 /*
 **	s_lex_utils.c
@@ -184,141 +137,6 @@ void 				common_error(int num);
 void 				lexical_error(unsigned row, unsigned col);
 void 				token_error(t_lex *lx);
 void 				argument_error(t_lex *lx, char *op);
-
-
-
-
-static t_op_tab		op_tab[] =
-		{
-				{
-/* code */			0x01,
-/* name */			"live",
-/* args_num */		1,
-/* args_t_code*/	0,
-/* args_types */	{T_DIR, 0, 0},
-/* T_DIR size */	4
-				},
-				{
-/* code */			0x02,
-/* name */			"ld",
-/* args_num */		2,
-/* args_t_code*/	1,
-/* args_types */	{T_DIR | T_IND, T_REG, 0},
-/* T_DIR size */	4
-				},
-				{
-/* code */			0x03,
-/* name */			"st",
-/* args_num */		2,
-/* args_t_code*/	1,
-/* args_types */	{T_REG, T_REG | T_IND, 0},
-/* T_DIR size */	4
-				},
-				{
-/* code */			0x04,
-/* name */			"add",
-/* args_num */		3,
-/* args_t_code*/	1,
-/* args_types */	{T_REG, T_REG, T_REG},
-/* T_DIR size */	4
-				},
-				{
-/* code */			0x05,
-/* name */			"sub",
-/* args_num */		3,
-/* args_t_code*/	1,
-/* args_types */	{T_REG, T_REG, T_REG},
-/* T_DIR size */	4
-				},
-				{
-/* code */			0x06,
-/* name */			"and",
-/* args_num */		3,
-/* args_t_code*/	1,
-/* args_types */	{T_REG | T_DIR | T_IND,  T_REG |  T_DIR | T_IND, T_REG},
-/* T_DIR size */	4
-				},
-				{
-/* code */			0x07,
-/* name */			"or",
-/* args_num */		3,
-/* args_t_code*/	1,
-/* args_types */	{T_REG | T_DIR | T_IND, T_REG | T_DIR | T_IND, T_REG},
-/* T_DIR size */	4
-				},
-				{
-/* code */			0x08,
-/* name */			"xor",
-/* args_num */		3,
-/* args_t_code*/	1,
-/* args_types */	{T_REG | T_DIR | T_IND, T_REG | T_DIR | T_IND, T_REG},
-/* T_DIR size */	4
-				},
-				{
-/* code */			0x09,
-/* name */			"zjmp",
-/* args_num */		1,
-/* args_t_code*/	0,
-/* args_types */	{T_DIR, 0, 0},
-/* T_DIR size */	2
-				},
-				{
-/* code */			0x0a,
-/* name */			"ldi",
-/* args_num */		3,
-/* args_t_code*/	1,
-/* args_types */	{T_REG | T_DIR | T_IND, T_REG | T_DIR, T_REG},
-/* T_DIR size */	2
-				},
-				{
-/* code */			0x0b,
-/* name */			"sti",
-/* args_num */		3,
-/* args_t_code*/	1,
-/* args_types */	{T_REG, T_REG | T_DIR | T_IND, T_REG | T_DIR},
-/* T_DIR size */	2
-				},
-				{
-/* code */			0x0c,
-/* name */			"fork",
-/* args_num */		1,
-/* args_t_code*/	0,
-/* args_types */	{T_DIR, 0, 0},
-/* T_DIR size */	2
-				},
-				{
-/* code */			0x0d,
-/* name */			"lld",
-/* args_num */		2,
-/* args_t_code*/	1,
-/* args_types */	{T_DIR | T_IND, T_REG, 0},
-/* T_DIR size */	4
-				},
-				{
-/* code */			0x0e,
-/* name */			"lldi",
-/* args_num */		3,
-/* args_t_code*/	1,
-/* args_types */	{T_REG | T_DIR | T_IND, T_REG | T_DIR, T_REG},
-/* T_DIR size */	2
-				},
-				{
-/* code */			0x0f,
-/* name */			"lfork",
-/* args_num */		1,
-/* args_t_code*/	0,
-/* args_types */	{T_DIR, 0, 0},
-/* T_DIR size */	2
-				},
-				{
-/* code */			0x10,
-/* name */			"aff",
-/* args_num */		1,
-/* args_t_code*/	1,
-/* args_types */	{T_REG, 0, 0},
-/* T_DIR size */	4
-				},
-		};
 
 
 #endif

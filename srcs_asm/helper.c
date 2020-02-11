@@ -16,8 +16,8 @@ void 					print_labels(t_lab *l)
 {
 	while (l)
 	{
-		ft_printf("%d:%d {yellow}%s{eoc}\n", l->row + 1, l->col + 1,
-				l->name);
+		ft_printf("%d:%d {yellow}%d %s{eoc}\n", l->row + 1, l->col + 1,
+				l->code_pos, l->name);
 		l = l->next;
 	}
 }

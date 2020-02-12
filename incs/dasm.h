@@ -51,7 +51,7 @@ t_op					*init_operation();
 void					write_to_file(t_parser *p, char *path);
 
 /*
-**	helper.c
+**	dasm_utilities.c
 */
 void					free_allocated(t_parser *p);
 void					display_collected(t_parser *p);

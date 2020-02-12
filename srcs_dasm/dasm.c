@@ -18,6 +18,6 @@ int				main(int ac, char **av)
         dasm_parser(av[1]);
     }
     else
-        display_error(INVALID_FILE);
+        d_error(INVALID_FILE);
     return (0);
 }

@@ -1,6 +1,9 @@
-.name "stayin' alive"
-.comment "Ha, Ha, Ha, stayiiiiin' aliiiiiiiiiive"
+.name       "Batman"
+.comment    "This city needs me"
 
-live %15512523
-lab1:
-	ld %1, r2
+loop:
+        sti r1, %:live, %1
+live:
+        live %0
+        ld %0, r2
+        zjmp %:loop

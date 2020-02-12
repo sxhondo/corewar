@@ -27,3 +27,14 @@ void 		argument_error(t_lex *lx, char *op)
 			   lx->row + 1, lx->col + 1, tokens[lx->type], lx->lex, op);
 	exit(4);
 }
+
+void 		undeclared_label_error(t_ref *r)
+{
+	while (r)
+	{
+		ft_fprintf(2, "undeclared label \"%s\" at %d:%d\n",
+				   r->name, r->row + 1, r->col + 1);
+		r = r->next;
+	}
+	exit(5);
+}

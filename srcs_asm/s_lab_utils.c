@@ -34,29 +34,14 @@ void 			push_label(t_asm_parser *p, t_lex *lx)
 	}
 }
 
-static int32_t 		find_label_pos(t_lab *lab, char *search)
+
+int32_t 			find_declared_labs(t_asm_parser *p, t_lab *lab, char *search)
 {
 	while (lab)
 	{
 		if (ft_strequ(lab->name, search))
-			return (lab->code_pos);
+			return (p->pos - lab->code_pos);
 		lab = lab->next;
 	}
-	return (-1);
-}
-
-int32_t 			find_label_diff(t_lab *lab, char *search, size_t pos)
-{
-	int32_t			i;
-	int32_t 		tmp;
-
-	i = 0;
-	if ((tmp = find_label_pos(lab, search)) == -1)
-		return (-1);
-	while (pos > tmp)
-	{
-		pos--;
-		i--;
-	}
-	return (i);
+	return (0);
 }

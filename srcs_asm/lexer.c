@@ -43,7 +43,7 @@ static char 		*get_direct(t_asm_parser *p)
 
 	i = 0;
 	type = 0;
-	if (p->f_data[p->pos] == LABEL_CHAR && p->pos++ && p->col++)
+	if (p->f_data[p->pos] == LABEL_CHAR && p->pos++)
 	{
 		while (p->f_data[p->pos + i] && is_label_char(p->f_data[p->pos + i]))
 			i++;
@@ -55,11 +55,13 @@ static char 		*get_direct(t_asm_parser *p)
 			i++;
 		type = DIRECT;
 	}
+	if (i == 0)
+		lexical_error(p->row, p->col);
 	if (!(tmp = ft_strndup(p->f_data + p->pos, i)))
 		common_error(CANT_ALLOCATE);
 	push_lexeme(p, type, tmp);
 	p->pos += i;
-	p->col += i;
+	p->col += i + 1;
 	return (tmp);
 }
 
@@ -80,7 +82,7 @@ static void 	get_lirii(t_asm_parser *p)
 		push_lexeme(p, LABEL, ft_realloc(tmp, len - 1));
 	else if (tmp[0] == LABEL_CHAR)
 		push_lexeme(p, INDIRECT_LABEL, ft_realloc(tmp + 1, len - 1));
-	else if (tmp[0] == 'r')
+	else if (tmp[0] == 'r' && ++p->col)
 		push_lexeme(p, REGISTER, ft_realloc(tmp + 1, len - 1));
 	else if (get_operator(tmp))
 		push_lexeme(p, INSTRUCTION, ft_realloc(tmp, len));
@@ -101,7 +103,7 @@ void 			parse_expressions(t_asm_parser *p)
 		get_string(p);
 	else if (p->f_data[p->pos] == LABEL_CHAR || is_label_char(p->f_data[p->pos]))
 		get_lirii(p);
-	else if (p->f_data[p->pos] == DIRECT_CHAR && ++p->pos && ++p->col)
+	else if (p->f_data[p->pos] == DIRECT_CHAR && ++p->pos)
 		get_direct(p);
 	else if (p->f_data[p->pos] == SEPARATOR_CHAR && ++p->pos)
 		push_lexeme(p, SEPARATOR, NULL);

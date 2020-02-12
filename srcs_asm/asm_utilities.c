@@ -12,15 +12,15 @@
 
 #include "asm.h"
 
-void 					print_labels(t_lab *l)
-{
-	while (l)
-	{
-		ft_printf("%d:%d {yellow}%d %s{eoc}\n", l->row + 1, l->col + 1,
-				l->code_pos, l->name);
-		l = l->next;
-	}
-}
+//void 					print_labels(t_lab *l)
+//{
+//	while (l)
+//	{
+//		ft_printf("%d:%d {yellow}%d %s{eoc}\n", l->row + 1, l->col + 1,
+//				l->code_pos, l->name);
+//		l = l->next;
+//	}
+//}
 
 void 					print_tokens(t_lex *l)
 {
@@ -35,26 +35,40 @@ void 					print_tokens(t_lex *l)
 
 void 					free_all(t_asm_parser *p)
 {
-	t_lab				*nex;
-	t_lex				*next;
+	t_lab				*lab_next;
+	t_lex				*lex_next;
+	t_ref 				*ref_next;
 
 	while (p->lex)
 	{
-		next = p->lex->next;
+		lex_next = p->lex->next;
 		ft_strdel(&p->lex->lex);
 		free(p->lex);
-		p->lex = next;
+		p->lex = lex_next;
 	}
 	while (p->lab)
 	{
-		nex = p->lab->next;
+		lab_next = p->lab->next;
 		free(p->lab);
-		p->lab = nex;
+		p->lab = lab_next;
+	}
+	while (p->ref)
+	{
+		ref_next = p->ref->next;
+		free(p->ref);
+		p->ref = ref_next;
 	}
 	ft_vec_del(&(p->code));
 	ft_vec_del(&(p->file));
 	close(p->fd);
 	free(p);
+}
+
+t_lex 				*skip_nl(t_lex *lx)
+{
+	while (lx->type == NL)
+		lx = lx->next;
+	return (lx);
 }
 
 int32_t					core_atoi(const char *str, t_lex *lx)

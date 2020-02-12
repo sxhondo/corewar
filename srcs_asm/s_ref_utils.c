@@ -1,17 +1,41 @@
 #include "asm.h"
 
-void 			restore_ref(t_asm_parser *p, t_ref *ref)
+void 			print_ref(t_ref *r)
 {
-	t_int32 	k;
-
-	k.num = p->pos - p->ref->pos;
-	ft_printf("diff is %d\n", k.num);
-	ft_printf("ref: %s: was at [%d]\n", p->ref->name, p->ref->pos);
-	ft_printf("curr at [%d]\n", p->pos);
-	int32_converter(p, ref->size, k, p->ref->pos);
+	while (r)
+	{
+		ft_printf("on: %d, op_pos: %d, ex_pos: %d\n", r->on, r->op_pos, r->exact_pos);
+		ft_printf("%s", r->name);
+		r = r->next;
+	}
 }
 
-void 			push_ref(t_asm_parser *p, int32_t size, char *name)
+void 			check_unused_refs(t_asm_parser *p, t_ref *r, t_lab *lab)
+{
+	t_int32		k;
+	t_lab		*l;
+
+	while (r)
+	{
+		l = lab;
+		while (l)
+		{
+			if (ft_strequ(r->name, l->name))
+			{
+				k.num = l->code_pos - r->op_pos;
+				int32_converter(p, r->size, k, r->exact_pos);
+				display_grid(p->code->data, p->code->total, -1);
+				break ;
+			}
+			l = l->next;
+		}
+		if (l == NULL)
+			undeclared_label_error(r);
+		r = r->next;
+	}
+}
+
+void 			push_ref(t_asm_parser *p, t_lex *lx, int32_t size, size_t ex_pos)
 {
 	t_ref		*r;
 	t_ref 		*tmp;
@@ -20,9 +44,12 @@ void 			push_ref(t_asm_parser *p, int32_t size, char *name)
 		common_error(CANT_ALLOCATE);
 	else
 	{
-		r->name = name;
-		r->on = 1;
-		r->pos = p->pos;
+		r->on = 0;
+		r->col = lx->col;
+		r->row = lx->row;
+		r->name = lx->lex;
+		r->op_pos = p->pos;
+		r->exact_pos = ex_pos;
 		r->size = size;
 		tmp = p->ref;
 		if (!p->ref)

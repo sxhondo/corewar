@@ -25,7 +25,7 @@ DASM_SRCS_DIR = 	srcs_dasm/
 DASM_SRCS_LIST =	dasm.c \
 					write_to_file.c\
 					dasm_parser.c init_dasm_parser.c\
-					helper.c
+					dasm_utilities.c
 DASM_OBJ_LIST = 	$(DASM_SRCS_LIST:%.c=%.o)
 DASM_OBJECTS = 		$(addprefix $(OBJ_DIR), $(DASM_OBJ_LIST))
 
@@ -40,10 +40,9 @@ $(OBJ_DIR)%.o: $(DASM_SRCS_DIR)%.c $(DASM_INC)
 ASM = 				asm
 ASM_INC = 			$(INC_DIR)asm.h
 ASM_SRCS_DIR = 		srcs_asm/
-ASM_SRCS_LIST =		asm.c \
-					asm_parser.c lexer.c\
-					s_lex_utils.c helper.c skipers.c\
-					init.c error.c\
+ASM_SRCS_LIST =		asm.c asm_parser.c handle_operations.c  lexer.c \
+					asm_utilities.c init.c int_converters.c error.c \
+					s_lab_utils.c s_lex_utils.c s_ref_utils.c skipers.c\
 
 ASM_OBJ_LIST = 		$(ASM_SRCS_LIST:%.c=%.o)
 ASM_OBJECTS = 		$(addprefix $(OBJ_DIR), $(ASM_OBJ_LIST))

@@ -1,6 +1,6 @@
 #include "asm.h"
 
-static void 		get_string(t_asm_parser *p)
+static void 		get_string(t_cursor *p)
 {
 	char 			*new;
 	int 			i;
@@ -19,7 +19,7 @@ static void 		get_string(t_asm_parser *p)
 	p->col += i + 1;
 }
 
-static void 		get_command(t_asm_parser *p)
+static void 		get_command(t_cursor *p)
 {
 	char 			*tmp;
 	int 			i;
@@ -35,7 +35,7 @@ static void 		get_command(t_asm_parser *p)
 	p->pos += i;
 }
 
-static char 		*get_direct(t_asm_parser *p)
+static char 		*get_direct(t_cursor *p)
 {
 	int 			i;
 	char 			*tmp;
@@ -65,7 +65,7 @@ static char 		*get_direct(t_asm_parser *p)
 	return (tmp);
 }
 
-static void 	get_lirii(t_asm_parser *p)
+static void 	get_lirii(t_cursor *p)
 {
 	char 		*tmp;
 	int 		len;
@@ -93,7 +93,7 @@ static void 	get_lirii(t_asm_parser *p)
 	p->pos += i;
 }
 
-void 			parse_expressions(t_asm_parser *p)
+void 			collect_lexemes(t_cursor *p)
 {
 	if (p->f_data[p->pos] == '\n' && ++p->pos)
 		push_lexeme(p, NL, NULL);

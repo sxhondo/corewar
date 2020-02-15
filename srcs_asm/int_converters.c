@@ -1,6 +1,6 @@
 #include "asm.h"
 
-void 					int32_converter(t_asm_parser *p, unsigned size,
+void 					int32_converter(t_cursor *p, unsigned size,
 													t_int32 k, size_t ref_pos)
 {
 	size_t				i;

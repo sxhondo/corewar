@@ -55,6 +55,26 @@ typedef struct 		s_ref
 	struct s_ref 	*next;
 }					t_ref;
 
+
+typedef struct 			s_op
+{
+	size_t 				bytes;
+	uint8_t 			code;
+	struct s_lab 		*labels;
+	struct s_args 		*args;
+	struct s_op			*next;
+}						t_op;
+
+typedef struct 			s_args
+{
+	char 				*data;
+	uint8_t 			type;
+	int32_t  			code;
+	size_t 				row;
+	size_t 				col;
+	struct s_args		*next;
+}						t_args;
+
 typedef struct 		s_lex
 {
 	char 			*lex;
@@ -64,13 +84,14 @@ typedef struct 		s_lex
 	struct s_lex 	*next;
 }					t_lex;
 
-typedef struct      s_asm_parser
+typedef struct      s_cursor
 {
-	t_vec           *file;
+	struct s_vec	*file;
 	struct s_vec	*code;
-	t_lex 			*lex;
-	t_lab 			*lab;
-	t_ref 			*ref;
+	struct s_lex	*lex;
+	struct s_lab	*lab;
+	struct s_ref	*ref;
+	struct s_op		*root;
 	char 			*f_data;
 	int             fd;
 	char            *name;
@@ -79,42 +100,48 @@ typedef struct      s_asm_parser
 	size_t 			row;
 	size_t 			col;
 
-}                   t_asm_parser;
+}                   t_cursor;
 
 void				asm_parser(char *path);
 
 /*
-**	handle_operations.c
+**	syntaxer_tree.c
 */
-t_lex				*handle_operations(t_asm_parser *p, t_lex *lx);
+void 				syntaxer(t_cursor *p);
 
+
+/*
+**	syntaxer_straight.c
+*/
+void 				handle_expressions(t_cursor *p, t_lex *lx);
+t_lex 				*handle_name(t_cursor *p, t_lex *lx);
 /*
 **	int_converters.c
 */
-void 				int32_converter(t_asm_parser *p, unsigned size, t_int32 k, size_t start);
+void 				int32_converter(t_cursor *p, unsigned size, t_int32 k, size_t start);
 /*
 **	lexer.c
 */
-void 				parse_expressions(t_asm_parser *p);
+void 				collect_lexemes(t_cursor *p);
 
 /*
 **	s_ref_utils.c
 */
 void 				print_ref(t_ref *r);
-void 				check_unused_refs(t_asm_parser *p, t_ref *r, t_lab *lab);
-void 				push_ref(t_asm_parser *p, t_lex *lx,
+void 				check_unused_refs(t_cursor *p, t_ref *r, t_lab *lab);
+void 				push_ref(t_cursor *p, t_lex *lx,
 												int32_t size, size_t ex_pos);
 
 /*
 **	s_lab_utils.c
 */
-void 				push_label(t_asm_parser *p, t_lex *lx);
-int32_t 			find_declared_labs(t_asm_parser *p, t_lab *lab, char *search);
+void 				push_label(t_cursor *p, t_lex *lx);
+int32_t 			find_declared_labs(t_cursor *p, t_lab *lab, char *search);
 
 /*
 **	s_lex_utils.c
 */
-void 				push_lexeme(t_asm_parser *p, int type, char *lex);
+void 				push_lexeme(t_cursor *p, int type, char *lex);
 
 /*
 **	skipers.c
@@ -123,21 +150,22 @@ int 				is_whitespace(char c);
 int 				is_num(char c);
 int 				get_operator(char *name);
 int 				is_label_char(char c);
-int 				skip_void(t_asm_parser *p);
+int 				skip_void(t_cursor *p);
 
 /*
 **	asm_utilities.c
 */
-//void 				print_labels(t_lab *l);
+void 				print_lexical_tree(t_op *root);
+void 				print_labels(t_lab *l);
 void 				print_tokens(t_lex *l);
-void 				free_all(t_asm_parser *p);
-t_lex 				*skip_nl(t_lex *lx);
-int32_t				core_atoi(const char *str, t_lex *lx);
+void 				free_all(t_cursor *p);
+void 				skip_nl(t_cursor *p);
+int32_t				core_atoi(const char *str, t_args *ar);
 
 /*
 **	init.c
 */
-t_asm_parser		*init_asm_parser(char *path);
+t_cursor			*init_cursor(char *path);
 
 /*
 **	errors.c

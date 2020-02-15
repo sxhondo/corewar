@@ -1,5 +1,11 @@
 #include "asm.h"
 
+void 				skip_nl(t_cursor *p)
+{
+	while (p->lex->type == NL)
+		p->lex = p->lex->next;
+}
+
 int 				is_whitespace(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\v');
@@ -38,7 +44,7 @@ int 				is_label_char(char c)
 	return (0);
 }
 
-int 				skip_void(t_asm_parser *p)
+int 				skip_void(t_cursor *p)
 {
 	while (p->f_data[p->pos] && (is_whitespace(p->f_data[p->pos])))
 	{

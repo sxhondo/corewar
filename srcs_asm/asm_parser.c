@@ -12,63 +12,62 @@
 
 #include "asm.h"
 
-static t_lex 		*validate_name(t_asm_parser *p, t_lex *lx)
+static int32_t 		calculate_distance(t_op *root)
 {
-	if ((lx = skip_nl(lx)) && lx->type != COMMAND)
-		token_error(lx);
-	while (p->name == NULL || p->comment == NULL)
+	size_t 			pos;
+
+	pos = 0;
+	while (root)
 	{
-		if (lx->next->type != STRING)
-			token_error(lx->next);
-		if (ft_strequ(lx->lex, NAME_CMD_STRING))
-		{
-			p->name = lx->next->lex;
-			if (ft_strlen(p->name) > PROG_NAME_LENGTH)
-				common_error(NAME_TOO_BIG);
-		}
-		else if (ft_strequ(lx->lex, COMMENT_CMD_STRING))
-		{
-			p->comment = lx->next->lex;
-			if (ft_strlen(p->comment) > COMMENT_LENGTH)
-				common_error(COMM_TOO_BIG);
-		}
-		lx = lx->next->next;
-		if (lx->type != NL)
-			token_error(lx);
-		lx = lx->next;
+
+		root = root->next;
 	}
-	return (lx);
+
+
 }
 
-static void 		handle_expressions(t_asm_parser *p, t_lex *lx)
+static void 		semantic_analyzer(t_cursor *p)
 {
-	lx = validate_name(p, lx);
-	while ((lx = skip_nl(lx)) && lx->type != EOF)
+	t_op			*r;
+	t_args			*ar;
+	size_t 			code_p;
+
+	code_p = 0;
+	r = p->root;
+	while (r)
 	{
-		if (lx->type == LABEL)
+		ar = r->args;
+		ft_printf("%s: ", op_tab[r->code - 1].name);
+		while (ar)
 		{
-			push_label(p, lx);
-			lx = lx->next;
+			if (ar->type == DIRECT || ar->type == INDIRECT || ar->type == REGISTER)
+				ar->code = core_atoi(ar->data, ar);
+			else if (ar->type == DIRECT_LABEL || ar->type == INDIRECT_LABEL)
+				ar->code = calculate_distance(p->root);
+			ft_printf("%s ", ar->data);
+			ar = ar->next;
 		}
-		else if (lx->type == INSTRUCTION)
-			lx = handle_operations(p, lx);
-		else
-			token_error(lx);
+		ft_printf("\n");
+		r = r->next;
 	}
-	check_unused_refs(p, p->ref, p->lab);
 }
 
 void				asm_parser(char *path)
 {
-	t_asm_parser	*p;
+	t_cursor		*p;
 
-    p = init_asm_parser(path);
-	while (p->pos < p->file->total - 1 && skip_void(p))
-		parse_expressions(p);
+    p = init_cursor(path);
+	while (p->pos < p->file->total - 1)
+	{
+		skip_void(p);
+		collect_lexemes(p);
+	}
 	push_lexeme(p, EOF, NULL);
-	p->pos = 0;
-	handle_expressions(p, p->lex);
+	syntaxer(p);
+//	semantic_analyzer(p);
 
+//	print_labels(p->lab);
+	print_lexical_tree(p->root);
 //	print_tokens(p->lex);
 	free_all(p);
 }

@@ -12,15 +12,43 @@
 
 #include "asm.h"
 
-//void 					print_labels(t_lab *l)
-//{
-//	while (l)
-//	{
-//		ft_printf("%d:%d {yellow}%d %s{eoc}\n", l->row + 1, l->col + 1,
-//				l->code_pos, l->name);
-//		l = l->next;
-//	}
-//}
+void 			print_lexical_tree(t_op *root)
+{
+	t_args		*arg;
+	t_lab		*lab;
+
+
+	while (root)
+	{
+		ft_printf("%s: (b_size: %d)", op_tab[root->code - 1].name, root->bytes);
+		ft_printf("lab: ");
+		lab = root->labels;
+		while (lab)
+		{
+			ft_printf("%s", lab->name);
+			lab = lab->next;
+		}
+		ft_printf("\n\t|--");
+		arg = root->args;
+		while (arg)
+		{
+			ft_printf("%-4s ", arg->data);
+			arg = arg->next;
+		}
+		ft_printf("\n");
+		root = root->next;
+	}
+}
+
+void 					print_labels(t_lab *l)
+{
+	while (l)
+	{
+		ft_printf("%d:%d {yellow}%d %s{eoc}\n", l->row + 1, l->col + 1,
+				l->code_pos, l->name);
+		l = l->next;
+	}
+}
 
 void 					print_tokens(t_lex *l)
 {
@@ -33,11 +61,13 @@ void 					print_tokens(t_lex *l)
 	}
 }
 
-void 					free_all(t_asm_parser *p)
+void 					free_all(t_cursor *p)
 {
 	t_lab				*lab_next;
 	t_lex				*lex_next;
 	t_ref 				*ref_next;
+	t_op				*op_next;
+	t_args				*arg_next;
 
 	while (p->lex)
 	{
@@ -58,20 +88,32 @@ void 					free_all(t_asm_parser *p)
 		free(p->ref);
 		p->ref = ref_next;
 	}
+	while (p->root)
+	{
+		op_next = p->root->next;
+		while (p->root->args)
+		{
+			arg_next = p->root->args->next;
+			free(p->root->args);
+			p->root->args = arg_next;
+		}
+		free(p->root);
+		p->root = op_next;
+	}
 	ft_vec_del(&(p->code));
 	ft_vec_del(&(p->file));
 	close(p->fd);
 	free(p);
 }
 
-t_lex 				*skip_nl(t_lex *lx)
-{
-	while (lx->type == NL)
-		lx = lx->next;
-	return (lx);
-}
+//t_lex 				*skip_nl(t_lex *lx)
+//{
+//	while (lx->type == NL)
+//		lx = lx->next;
+//	return (lx);
+//}
 
-int32_t					core_atoi(const char *str, t_lex *lx)
+int32_t					core_atoi(const char *str, t_args *ar)
 {
 	int					sign;
 	int32_t 			res;
@@ -81,15 +123,15 @@ int32_t					core_atoi(const char *str, t_lex *lx)
 	if ((*str == '-' || *str == '+'))
 		sign = *str++ == '-' ? -1 : 1;
 	if (!ft_isdigit(*str))
-		lexical_error(lx->row, lx->col);
+		lexical_error(ar->row, ar->col);
 	while (*str && ft_isdigit(*str))
 	{
 		if (!*str || *str < '0' || *str > '9')
-			lexical_error(lx->row, lx->col);
+			lexical_error(ar->row, ar->col);
 		res = res * 10 + (*str++ - '0');
 		if ((sign == 1 && res > INT32_MAX)
 			|| (sign == -1 && res - 2 >= INT32_MAX))
-			lexical_error(lx->row, lx->col);
+			lexical_error(ar->row, ar->col);
 	}
 	return ((int32_t)(res * sign));
 }

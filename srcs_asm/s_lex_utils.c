@@ -1,6 +1,6 @@
 #include "asm.h"
 
-static t_lex	*init_lex(int type, char *lex, t_asm_parser *p)
+static t_lex	*init_lex(int type, char *lex, t_cursor *p)
 {
 	t_lex		*l;
 
@@ -16,7 +16,7 @@ static t_lex	*init_lex(int type, char *lex, t_asm_parser *p)
 	return (l);
 }
 
-void 			push_lexeme(t_asm_parser *p, int type, char *lex)
+void 			push_lexeme(t_cursor *p, int type, char *lex)
 {
 	t_lex		*tmp;
 	t_lex		*l;

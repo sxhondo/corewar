@@ -18,11 +18,11 @@ static t_vec    	*vec_read(int fd)
 	return (vec);
 }
 
-t_asm_parser			*init_asm_parser(char *path)
+t_cursor			*init_cursor(char *path)
 {
-	t_asm_parser		*p;
+	t_cursor		*p;
 
-	if ((p = ft_memalloc(sizeof(t_asm_parser))) == NULL)
+	if ((p = ft_memalloc(sizeof(t_cursor))) == NULL)
 		common_error(CANT_ALLOCATE);
 	if ((p->fd = open(path, O_RDONLY)) < 0)
 		common_error(CANT_OPEN);

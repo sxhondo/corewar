@@ -10,7 +10,7 @@ void 			print_ref(t_ref *r)
 	}
 }
 
-void 			check_unused_refs(t_asm_parser *p, t_ref *r, t_lab *lab)
+void 			check_unused_refs(t_cursor *p, t_ref *r, t_lab *lab)
 {
 	t_int32		k;
 	t_lab		*l;
@@ -35,7 +35,7 @@ void 			check_unused_refs(t_asm_parser *p, t_ref *r, t_lab *lab)
 	}
 }
 
-void 			push_ref(t_asm_parser *p, t_lex *lx, int32_t size, size_t ex_pos)
+void 			push_ref(t_cursor *p, t_lex *lx, int32_t size, size_t ex_pos)
 {
 	t_ref		*r;
 	t_ref 		*tmp;

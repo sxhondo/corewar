@@ -28,13 +28,9 @@ void 		argument_error(t_lex *lx, char *op)
 	exit(4);
 }
 
-void 		undeclared_label_error(t_ref *r)
+void 		undeclared_label_error(char *name, size_t row, size_t col)
 {
-	while (r)
-	{
-		ft_fprintf(2, "undeclared label \"%s\" at %d:%d\n",
-				   r->name, r->row + 1, r->col + 1);
-		r = r->next;
-	}
+	ft_fprintf(2, "undeclared label \"%s\" at %d:%d\n",
+				   name, row + 1, col + 1);
 	exit(5);
 }

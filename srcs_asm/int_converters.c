@@ -21,3 +21,26 @@ void 					int32_converter(t_cursor *p, unsigned size,
 	}
 	display_grid(p->code->data, p->code->total, -1);
 }
+
+int32_t					core_atoi(const char *str, size_t row, size_t col)
+{
+	int					sign;
+	int64_t 			res;
+
+	res = 0;
+	sign = 1;
+	if ((*str == '-' || *str == '+'))
+		sign = *str++ == '-' ? -1 : 1;
+	if (!ft_isdigit(*str))
+		lexical_error(row, col);
+	while (*str && ft_isdigit(*str))
+	{
+		if (!*str || *str < '0' || *str > '9')
+			lexical_error(row, col);
+		res = res * 10 + (*str++ - '0');
+		if ((sign == 1 && res > INT32_MAX)
+			|| (sign == -1 && res - 2 >= INT32_MAX))
+			lexical_error(row, col);
+	}
+	return ((int32_t)(res * sign));
+}

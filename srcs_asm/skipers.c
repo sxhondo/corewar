@@ -1,9 +1,10 @@
 #include "asm.h"
 
-void 				skip_nl(t_cursor *p)
+int 				skip_nl(t_cursor *p)
 {
 	while (p->lex->type == NL)
 		p->lex = p->lex->next;
+	return (1);
 }
 
 int 				is_whitespace(char c)
@@ -14,6 +15,11 @@ int 				is_whitespace(char c)
 int 				is_num(char c)
 {
 	return (ft_isdigit(c) || c == '-');
+}
+
+int 				is_liri_attr(char c)
+{
+	return (c == LABEL_CHAR || is_label_char(c) || is_num(c));
 }
 
 int 				get_operator(char *name)

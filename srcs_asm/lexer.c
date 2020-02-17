@@ -9,14 +9,14 @@ static void 		get_string(t_cursor *p)
 	while (p->f_data[p->pos + i] != '"')
 	{
 		if (p->f_data[p->pos + i] == '\n' && ++p->row)
-			p->col = 1;
+			p->col = 0;
+		p->col += p->f_data[p->pos + i] == '\t' ? 4 : 1;
 		i++;
 	}
 	if (!(new = ft_strndup(p->f_data + p->pos, i)))
 		common_error(CANT_ALLOCATE);
 	push_lexeme(p, STRING, new);
 	p->pos += i + 1;
-	p->col += i + 1;
 }
 
 static void 		get_command(t_cursor *p)
@@ -72,8 +72,7 @@ static void 	get_lirii(t_cursor *p)
 	int 		i;
 
 	i = 0;
-	while (p->f_data[p->pos + i] && (p->f_data[p->pos + i] == LABEL_CHAR ||
-	is_label_char(p->f_data[p->pos + i]) || is_num(p->f_data[p->pos + i])))
+	while (p->f_data[p->pos + i] && is_liri_attr(p->f_data[p->pos + i]))
 		i++;
 	if ((tmp = ft_strndup(p->f_data + p->pos, i)) == NULL)
 		common_error(CANT_ALLOCATE);
@@ -93,8 +92,9 @@ static void 	get_lirii(t_cursor *p)
 	p->pos += i;
 }
 
-void 			collect_lexemes(t_cursor *p)
+void 			lexer(t_cursor *p)
 {
+	skip_void(p);
 	if (p->f_data[p->pos] == '\n' && ++p->pos)
 		push_lexeme(p, NL, NULL);
 	else if (p->f_data[p->pos] == '.')
@@ -107,6 +107,8 @@ void 			collect_lexemes(t_cursor *p)
 		get_direct(p);
 	else if (p->f_data[p->pos] == SEPARATOR_CHAR && ++p->pos)
 		push_lexeme(p, SEPARATOR, NULL);
+	else if (p->f_data[p->pos++] == '\0')
+		push_lexeme(p, EOF, NULL);
 	else
 		lexical_error(p->row, p->col);
 }

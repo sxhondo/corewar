@@ -107,6 +107,5 @@ add_executable(corewar
 #        srcs_dasm/dasm.c
         incs/asm.h
         srcs_asm/asm.c
-        srcs_asm/asm_parser.c
         srcs_asm/asm_utilities.c
-        srcs_asm/skipers.c srcs_asm/error.c srcs_asm/init.c srcs_asm/lexer.c srcs_asm/int_converters.c incs/general.h srcs_asm/syntaxer_straight.c srcs_asm/syntaxer_tree.c srcs_asm/s_utils.c srcs_asm/analyzer.c)
+        srcs_asm/skipers.c srcs_asm/error.c srcs_asm/init.c srcs_asm/lexer.c srcs_asm/int_converters.c incs/general.h srcs_asm/syntaxer_straight.c srcs_asm/syntaxer.c srcs_asm/s_utils.c srcs_asm/analyzer.c)

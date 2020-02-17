@@ -21,6 +21,8 @@ void 			push_lexeme(t_cursor *p, int type, char *lex)
 	t_lex		*tmp;
 	t_lex		*l;
 
+	if ((type != NL && type != SEPARATOR && type != EOF) && lex == NULL)
+		common_error(CANT_ALLOCATE);
 	l = init_lex(type, lex, p);
 	if (type == NL)
 	{

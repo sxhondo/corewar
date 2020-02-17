@@ -23,6 +23,21 @@ static int		check_ext(char *path)
 	return (0);
 }
 
+static void			asm_parser(char *path)
+{
+	t_cursor		*p;
+
+	p = init_cursor(path);
+	while (p->pos < p->file->total)
+		lexer(p);
+//	print_tokens(p->lex);
+	syntaxer(p);
+	analyzer(p);
+	print_lexical_tree(p->root, 'f');
+	free_all(p);
+}
+
+
 int				main(int ac, char **av)
 {
 	if (ac == 2 && check_ext(av[1]))

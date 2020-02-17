@@ -36,7 +36,21 @@ static int32_t 		search_label(t_ins *root, char *search, int mod)
 	return (-1);
 }
 
-static int32_t		calculate_distance(t_ins *curr, char *search, size_t col)
+static int 			handle_un_lab(t_cursor *p, char *search)
+{
+	t_lab			*l;
+
+	l = p->lab;
+	while (l)
+	{
+		if (ft_strequ(l->name, search))
+			return (1);
+		l = l->next;
+	}
+	return (0);
+}
+
+static int32_t		calculate_distance(t_cursor  *p, t_ins *curr, char *search, size_t col)
 {
 	t_ins			*rev;
 	int32_t 		a;
@@ -48,7 +62,8 @@ static int32_t		calculate_distance(t_ins *curr, char *search, size_t col)
 			rev = rev->next;
 		while (rev && rev->row != curr->row)
 			rev = rev->prev;
-		if ((a = search_label(rev, search, 1)) == -1)
+		if ((a = search_label(rev, search, 1)) == -1
+			&& !handle_un_lab(p, search))
 			undeclared_label_error(search, curr->row, col);
 	}
 	return (a);
@@ -70,7 +85,7 @@ void 				analyzer(t_cursor *p)
 			if (ar->type == DIRECT || ar->type == INDIRECT || ar->type == REGISTER)
 				ar->code = core_atoi(ar->data, r->row, ar->col);
 			else if (ar->type == DIRECT_LABEL || ar->type == INDIRECT_LABEL)
-				ar->code = calculate_distance(r, ar->data, ar->col);
+				ar->code = calculate_distance(p, r, ar->data, ar->col);
 //			ft_printf("%d", ar->code);
 			ar = ar->next;
 		}

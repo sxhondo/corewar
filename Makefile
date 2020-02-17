@@ -40,9 +40,9 @@ $(OBJ_DIR)%.o: $(DASM_SRCS_DIR)%.c $(DASM_INC)
 ASM = 				asm
 ASM_INC = 			$(INC_DIR)asm.h
 ASM_SRCS_DIR = 		srcs_asm/
-ASM_SRCS_LIST =		asm.c asm_parser.c handle_operations.c  lexer.c \
-					asm_utilities.c init.c int_converters.c error.c \
-					s_lab_utils.c s_lex_utils.c s_ref_utils.c skipers.c\
+ASM_SRCS_LIST =		asm.c asm_parser.c lexer.c syntaxer.c analyzer.c\
+					asm_utilities.c init.c int_converters.c error.c\
+					s_utils.c skipers.c dasm_utilities.c\
 
 ASM_OBJ_LIST = 		$(ASM_SRCS_LIST:%.c=%.o)
 ASM_OBJECTS = 		$(addprefix $(OBJ_DIR), $(ASM_OBJ_LIST))

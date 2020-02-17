@@ -93,8 +93,6 @@ typedef struct      s_cursor
 }                   t_cursor;
 
 
-void				asm_parser(char *path);
-
 /*
 **	analyzer.c
 */
@@ -121,7 +119,7 @@ int32_t				core_atoi(const char *str, size_t row, size_t col);
 /*
 **	lexer.c
 */
-void 				collect_lexemes(t_cursor *p);
+void 				lexer(t_cursor *p);
 
 
 /*
@@ -135,6 +133,7 @@ void 				push_back_argument(t_args **args, t_lex *lex);
 /*
 **	skipers.c
 */
+int 				is_liri_attr(char c);
 int 				is_whitespace(char c);
 int 				is_num(char c);
 int 				get_operator(char *name);
@@ -148,7 +147,7 @@ void 				print_lexical_tree(t_ins *root, char m);
 void 				print_labels(t_lab *l);
 void 				print_tokens(t_lex *l);
 void 				free_all(t_cursor *p);
-void 				skip_nl(t_cursor *p);
+int 				skip_nl(t_cursor *p);
 
 /*
 **	init.c

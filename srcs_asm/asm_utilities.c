@@ -64,6 +64,12 @@ void 					free_all(t_cursor *p)
 	t_ins				*op_next;
 	t_args				*arg_next;
 
+	while (p->lab)
+	{
+		lab_next = p->lab->next;
+		free(p->lab);
+		p->lab = lab_next;
+	}
 	while (p->lex)
 	{
 		lex_next = p->lex->next;

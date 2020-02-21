@@ -28,9 +28,18 @@ void 		argument_error(t_lex *lx, char *op)
 	exit(4);
 }
 
-void 		undeclared_label_error(char *name, size_t row, size_t col)
+void 		undeclared_label_error(t_lab *lab)
 {
-	ft_fprintf(2, "undeclared label \"%s\" at %d:%d\n",
-				   name, row + 1, col + 1);
+	t_lab 	*lab_next;
+
+	while (lab)
+	{
+		lab_next = lab->next;
+		ft_fprintf(2, "undeclared label \"%s\" at %d:%d\n",
+				   lab->name, lab->row + 1, lab->col + 1);
+		ft_strdel(&lab->name);
+		free(lab);
+		lab = lab_next;
+	}
 	exit(5);
 }

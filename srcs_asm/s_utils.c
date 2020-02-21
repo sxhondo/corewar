@@ -41,7 +41,7 @@ void 			push_lexeme(t_cursor *p, int type, char *lex)
 	}
 }
 
-void 			add_label(t_lab **dst, t_lex *lx)
+void 			add_label(t_lab **dst, char *name, size_t row)
 {
 	t_lab		*elem;
 
@@ -49,8 +49,8 @@ void 			add_label(t_lab **dst, t_lex *lx)
 		common_error(CANT_ALLOCATE);
 	else
 	{
-		elem->name = lx->lex;
-		elem->row = lx->row;
+		elem->name = name;
+		elem->row = row;
 		elem->next = *dst;
 		*dst = elem;
 	}

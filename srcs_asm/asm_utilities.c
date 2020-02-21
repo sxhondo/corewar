@@ -28,17 +28,16 @@ void 			print_lexical_tree(t_ins *root, char mod)
 		lab = root->lab;
 		while (lab)
 		{
-			ft_printf("{yellow}%s{eoc}", lab->name);
+			ft_printf("{yellow}%s {eoc}", lab->name);
 			lab = lab->next;
 		}
-		ft_printf("\n\t|--");
+		ft_printf("\n{red}%d: \t{eoc}|--", root->row);
 		arg = root->args;
 		while (arg)
 		{
-			if (arg->data && arg->code)
-				ft_printf("{blue}%-4d {eoc}", arg->code);
-			else
-				ft_printf("%-4s ", arg->data);
+			ft_printf("{blue}%-4d {eoc}", arg->code);
+//			else
+//				ft_printf("%-4s ", arg->data);
 			arg = arg->next;
 		}
 		ft_printf("\n");

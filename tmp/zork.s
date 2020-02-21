@@ -1,11 +1,11 @@
 .name "zork"
 .comment "I'M ALIIIIVE"
 
-l2:		sti r1, %:live, %1
-		and r1, %:unused, r1
+sti r1, %:l1, %1
+sti r1, %:l2, %1
+sti r1, %:l3, %1
 
-live:	live %1
- 		zjmp %:live
-unused:
-unused1:
-unused2:
+liv:
+live:
+liva:
+#un:#sti r1, %:un, %1

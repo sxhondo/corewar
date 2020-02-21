@@ -126,7 +126,7 @@ void 				lexer(t_cursor *p);
 **	s_utils.c
 */
 void 				push_lexeme(t_cursor *p, int type, char *lex);
-void 				add_label(t_lab **dst, t_lex *lx);;
+void 				add_label(t_lab **dst, char *name, size_t row);
 void 				add_ins(t_ins **dst, t_lex *curr, t_lab *lab);
 void 				push_back_argument(t_args **args, t_lex *lex);
 
@@ -161,6 +161,6 @@ void 				common_error(int num);
 void 				lexical_error(unsigned row, unsigned col);
 void 				token_error(t_lex *lx);
 void 				argument_error(t_lex *lx, char *op);
-void 				undeclared_label_error(char *name, size_t row, size_t col);
+void 				undeclared_label_error(t_lab *l);
 
 #endif

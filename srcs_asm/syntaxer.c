@@ -101,9 +101,11 @@ void 			syntaxer(t_cursor *p)
 	{
 //		ft_printf("%s\n", tokens[p->lex->type]);
 		if (p->lex->type == INSTRUCTION)
+		{
 			process_instruction(&root, p, &lab);
+		}
 		else if (p->lex->type == LABEL)
-			add_label(&lab, p->lex);
+			add_label(&lab, p->lex->lex, p->row);
 		else
 			token_error(p->lex);
 		p->lex = p->lex->next;

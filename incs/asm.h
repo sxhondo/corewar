@@ -47,6 +47,8 @@ typedef struct 			s_ins
 {
 	size_t 				bytes;
 	uint8_t 			code;
+	uint8_t 			type_code[3];
+	uint8_t 			type_code_pos;
 	size_t 				row;
 	struct s_args		*args;
 	struct s_lab 		*lab;
@@ -57,8 +59,9 @@ typedef struct 			s_ins
 typedef struct		s_args
 {
 	char 			*data;
+	size_t 			size;
 	uint8_t 		type;
-	int32_t 		code;
+	int64_t 		code;
 	size_t 			col;
 	struct s_args 	*next;
 }					t_args;
@@ -92,6 +95,10 @@ typedef struct      s_cursor
 
 }                   t_cursor;
 
+/*
+**	asm.c
+*/
+void				asm_parser(char *path);
 
 /*
 **	analyzer.c
@@ -99,22 +106,30 @@ typedef struct      s_cursor
 void 				analyzer(t_cursor *p);
 
 /*
+**	write_cor_file.c
+*/
+void 				write_in_file(t_vec *code, char *path);
+
+/*
+**	write_byte_code.c
+*/
+t_vec				*write_code(t_cursor *p);
+
+/*
 **	syntaxer_tree.c
 */
 void 				syntaxer(t_cursor *p);
 
 
-/*
-**	syntaxer_straight.c
-*/
 //void 				handle_expressions(t_cursor *p, t_lex *lx);
-//t_lex 				*handle_name(t_cursor *p, t_lex *lx);
+//t_lex 			*handle_name(t_cursor *p, t_lex *lx);
 
 /*
 **	int_converters.c
 */
-void 				int32_converter(t_cursor *p, unsigned size, t_int32 k, size_t start);
-int32_t				core_atoi(const char *str, size_t row, size_t col);
+void 				int32_converter(t_vec *code, unsigned size, t_int32 k);
+//int32_t				core_atoi(const char *str, size_t row, size_t col);
+int64_t				core_atoi(const char *str, size_t row, size_t col);
 
 /*
 **	lexer.c
@@ -128,7 +143,7 @@ void 				lexer(t_cursor *p);
 void 				push_lexeme(t_cursor *p, int type, char *lex);
 void 				add_label(t_lab **dst, char *name, size_t row);
 void 				add_ins(t_ins **dst, t_lex *curr, t_lab *lab);
-void 				push_back_argument(t_args **args, t_lex *lex);
+void 				push_back_argument(t_args **args, t_lex *lex, size_t size);
 
 /*
 **	skipers.c
@@ -159,7 +174,7 @@ t_cursor			*init_cursor(char *path);
 */
 void 				common_error(int num);
 void 				lexical_error(unsigned row, unsigned col);
-void 				token_error(t_lex *lx);
+void 				token_error(t_lex *lx, t_cursor *p);
 void 				argument_error(t_lex *lx, char *op);
 void 				undeclared_label_error(t_lab *l);
 

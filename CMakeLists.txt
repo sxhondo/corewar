@@ -100,12 +100,12 @@ add_executable(corewar
         libft/srcs/ft_vectors.c
         libft/srcs/ft_vfprintf.c
         libft/srcs/get_next_line.c
-        srcs_dasm/dasm_parser.c
-        srcs_dasm/dasm_utilities.c
-        srcs_dasm/init_dasm_parser.c
-        srcs_dasm/write_to_file.c
+        srcs/srcs_dasm/dasm_parser.c
+        srcs/srcs_dasm/dasm_utilities.c
+        srcs/srcs_dasm/init_dasm_parser.c
+        srcs/srcs_dasm/write_s_file.c
 #        srcs_dasm/dasm.c
         incs/asm.h
-        srcs_asm/asm.c
-        srcs_asm/asm_utilities.c
-        srcs_asm/skipers.c srcs_asm/error.c srcs_asm/init.c srcs_asm/lexer.c srcs_asm/int_converters.c incs/general.h srcs_asm/syntaxer_straight.c srcs_asm/syntaxer.c srcs_asm/s_utils.c srcs_asm/analyzer.c)
+        srcs/srcs_asm/asm.c
+        srcs/srcs_asm/asm_utilities.c
+        srcs/srcs_asm/skipers.c srcs/srcs_asm/error.c srcs/srcs_asm/init.c srcs/srcs_asm/lexer.c srcs/srcs_asm/int_converters.c incs/general.h srcs/srcs_asm/syntaxer_straight.c srcs/srcs_asm/syntaxer.c srcs/srcs_asm/s_utils.c srcs/srcs_asm/analyzer.c srcs/srcs_asm/write_byte_code.c srcs/srcs_asm/write_cor_file.c srcs/assembler.c)

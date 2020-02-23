@@ -1,14 +1,31 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   int_converters.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/02/23 20:17:33 by sxhondo           #+#    #+#             */
+/*   Updated: 2020/02/23 20:17:34 by sxhondo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "asm.h"
-/*
- * 	11111111
-	00001001
-	00000001
-	11111010
- */
-void 					int32_converter(t_vec *code, unsigned size, t_int32 k)
+
+void						write_null(t_vec *code, size_t size)
 {
-	size_t				i;
-	uint8_t 			octets[4];
+	union u_int32			k;
+
+	k.num = 0;
+	while (size--)
+		int32_converter(code, sizeof(uint8_t), k);
+}
+
+void						int32_converter(t_vec *code, unsigned size,
+			union u_int32 k)
+{
+	size_t					i;
+	uint8_t					octets[4];
 
 	octets[3] = k.octets.o4;
 	octets[2] = k.octets.o3;
@@ -20,29 +37,29 @@ void 					int32_converter(t_vec *code, unsigned size, t_int32 k)
 		ft_vec_add(&code, &octets[i]);
 		i--;
 	}
-//	display_grid(code->data, code->total, -1);
 }
 
-int64_t					core_atoi(const char *str, size_t row, size_t col)
+int32_t						core_atoi(const char *str)
 {
-	int					sign;
-	uint64_t			res;
+	unsigned long			result;
+	size_t					i;
+	int						sign;
 
-	res = 0;
-	sign = 1;
-	if ((*str == '-' || *str == '+'))
-		sign = *str++ == '-' ? -1 : 1;
-	if (!ft_isdigit(*str))
-		lexical_error(row, col);
-	while (*str && ft_isdigit(*str))
+	result = 0;
+	i = 0;
+	sign = (str[i] == '-') ? -1 : 1;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	while (ft_isdigit(str[i]))
 	{
-		if (!*str || *str < '0' || *str > '9')
-			lexical_error(row, col);
-		res = res * 10 + (*str++ - '0');
-		if ((sign == 1 && res > INT64_MAX))
+		if ((result > INT64_MAX || (result == INT64_MAX && (str[i] - '0') > 7))
+			&& sign == 1)
 			return (-1);
-		if ((sign == -1 && res - 2 >= INT64_MAX))
+		else if ((result > INT64_MAX
+		|| (result == INT64_MAX && (str[i] - '0') > 8))
+				&& sign == -1)
 			return (0);
+		result = result * 10 + (str[i++] - '0');
 	}
-	return ((int64_t)(res * sign));
+	return ((int32_t)(result * sign));
 }

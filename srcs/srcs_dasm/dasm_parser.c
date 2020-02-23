@@ -1,36 +1,45 @@
-#include <dasm.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dasm_parser.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/02/23 18:59:17 by sxhondo           #+#    #+#             */
+/*   Updated: 2020/02/23 18:59:18 by sxhondo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static void		check_header(int fd)
+#include "dasm.h"
+
+static void				check_header(int fd)
 {
-	uint8_t		b[4];
-	
+	uint8_t				b[4];
+
 	if ((read(fd, &b, 4)) != 4)
 		d_error(INVALID_FILE);
-	// ft_printf("Header: %x%x%x%x\n", b[0], b[1], b[2], b[3]);
 	if (b[0] == 0u &&
-			b[1] == ((COREWAR_EXEC_MAGIC) >> 16u) &&
-				b[2] == (uint8_t)(COREWAR_EXEC_MAGIC >> 8u) &&
-					b[3] == (uint8_t)(COREWAR_EXEC_MAGIC))
-					return ;
+		b[1] == ((COREWAR_EXEC_MAGIC) >> 16u) &&
+		b[2] == (uint8_t)(COREWAR_EXEC_MAGIC >> 8u) &&
+		b[3] == (uint8_t)(COREWAR_EXEC_MAGIC))
+		return ;
 	else
 		d_error(INVALID_HEADER);
 }
 
-static char		*check_string(int fd, int type)
+static char				*check_string(int fd, int type)
 {
-	int 		i, k;
-	char		*res;
-	uint8_t		b[type];
-	
+	int					i;
+	int					k;
+	char				*res;
+	uint8_t				b[type];
+
 	if ((read(fd, &b, type) != type))
 		d_error(INVALID_FILE);
-	k = 0;	
+	k = 0;
 	i = 0;
 	while (i < type)
 	{
-		// if (i != 0 && (i % 8) == 0)
-		// 	ft_printf("\n");
-		// ft_printf("%02x ", b[i]);
 		if (b[i] != 0)
 			k++;
 		i++;
@@ -38,25 +47,23 @@ static char		*check_string(int fd, int type)
 	if ((res = ft_strnew(k)) == NULL)
 		d_error(CANT_ALLOCATE);
 	ft_strncat(res, (char *)b, k);
-	// ft_printf("\n---\n");
-	return (res);	
+	return (res);
 }
 
-static void 		check_null(int fd)
+static void				check_null(int fd)
 {
-	uint8_t			b[4];
+	uint8_t				b[4];
 
 	if ((read(fd, &b, 4) != 4))
 		d_error(INVALID_FILE);
 	if (b[0] || b[1] || b[2] || b[3])
 		d_error(INVALID_NULL);
-
 }
 
-static unsigned 	check_exec_size(int fd)
+static unsigned			check_exec_size(int fd)
 {
-	t_int32			tmp;
-	uint8_t			b[4];
+	union u_int32		tmp;
+	uint8_t				b[4];
 
 	if ((read(fd, &b, 4) != 4))
 		d_error(INVALID_FILE);
@@ -67,152 +74,11 @@ static unsigned 	check_exec_size(int fd)
 	return (tmp.num);
 }
 
-static uint8_t		get_arg_size(uint8_t arg_type_code, uint8_t op)
+void					dasm_parser(char *path)
 {
-	if (arg_type_code == REG_CODE)
-		return (1u);
-	else if (arg_type_code == DIR_CODE)
-		return (op_tab[op - 1].t_dir_size);
-	else if (arg_type_code == IND_CODE)
-		return (IND_SIZE);
-	else
-	{
-		d_error(INVALID_ARG_SIZE);
-		return (-1);
-	}
-}
+	t_parser			*p;
 
-static int32_t 		set_bits(const int8_t save[], int arg_size)
-{
-	t_int32			k;
-
-	k.num = 0;
-	if (arg_size == 4)
-	{
-		k.octets.o4 = save[0];
-		k.octets.o3 = save[1];
-		k.octets.o2 = save[2];
-		k.octets.o1 = save[3];
-	}
-	if (arg_size == 3)
-	{
-		k.octets.o3 = save[0];
-		k.octets.o2 = save[1];
-		k.octets.o1 = save[2];
-	}
-	if (arg_size == 2)
-	{
-		k.octets.o2 = save[0];
-		k.octets.o1 = save[1];
-	}
-	if (arg_size == 1)
-		k.octets.o1 = save[0];
-	return (k.num);
-}
-
-static int32_t 		get_dir_undir(const uint8_t code[], int pos, int arg_size)
-{
-	int 			i;
-	int 			sign;
-	uint32_t 		ret;
-	int8_t 			save[arg_size];
-
-	i = -1;
-	sign = code[pos] & 0x80u ? 1 : 0;
-	while (++i < arg_size)
-	{
-		save[i] = sign ? ~(code[pos + i]) : code[pos + i];
-		ft_printf("%08b ", save[i]);
-	}
-	ret = set_bits(save, arg_size);
-	return (sign ? -(ret + 1) : ret);
-}
-
-static uint8_t		get_reg(const uint8_t code[], int pos)
-{
-	uint8_t			ret;
-
-	ret = code[pos];
-	if (ret < 0x01 || ret > 0x10)
-		d_error(REGISTER_OUT_OF_BOUNDS);
-	return (ret);
-}
-
-static void			get_args_type(t_op *op, t_parser *p, const uint8_t code)
-{
-	int 				i;
-	static t_int32		k = {0};
-
-	if (op_tab[op->op - 1].args_type_code == 1)
-	{
-		k.num = code;
-		op->args_type_code[0] = k.bin.b4;
-		op->args_type_code[1] = k.bin.b3;
-		op->args_type_code[2] = k.bin.b2;
-		i = -1;
-		while (++i < 3)
-		{
-			if (op->args_type_code[i] != 0
-				&& op->args_type_code[i] != REG_CODE
-					&& op->args_type_code[i] != DIR_CODE
-						&& op->args_type_code[i] != IND_CODE)
-				d_error(INVALID_TYPE_ARG);
-		}
-		p->pos += 1;
-	}
-	else
-		op->args_type_code[0] = DIR_CODE;
-}
-
-static void 		get_arguments(t_parser *p, t_op *elem, uint8_t code[])
-{
-	int 			i;
-	int 			arg_size;
-	int 			arg_amount;
-
-	arg_amount = op_tab[elem->op - 1].args_num;
-//	ft_printf("\n\n[%s] args: (%d)\n", op_tab[elem->op - 1].name, arg_amount);
-	display_grid(code, p->exe_code_size, p->pos);
-	i = -1;
-	while (++i < arg_amount)
-	{
-		arg_size = get_arg_size(elem->args_type_code[i], elem->op);
-		// ft_printf("size: %d byte\n", arg_size);
-		if (elem->args_type_code[i] == REG_CODE)
-			elem->args[i] = get_reg(code, p->pos);
-		if (elem->args_type_code[i] == DIR_CODE)
-			elem->args[i] = get_dir_undir(code, p->pos, arg_size);
-		if (elem->args_type_code[i] == IND_CODE)
-			elem->args[i] = get_dir_undir(code, p->pos, arg_size);
-		p->pos += arg_size;
-	}
-}
-
-static void 		check_exec_code(t_parser *p)
-{
-	uint8_t			b[p->exe_code_size];
-	t_op			*elem;
-	
-	if ((read(p->fd, &b, p->exe_code_size)) != p->exe_code_size)
-		d_error(INVALID_FILE);
-	while (p->pos < p->exe_code_size)
-	{
-		elem = init_operation();
-		elem->op = b[p->pos++];
-		// ft_printf("(%s)\n", op_tab[elem->op - 1].name);
-		if (elem->op < 0x01 || elem->op > 0x10)
-			d_error(INVALID_OP_NAME);
-		get_args_type(elem, p, b[p->pos]);
-		get_arguments(p, elem, b);
-		add_operation(&(p->ops), elem);
-	}
-}
-
-void				dasm_parser(char *path)
-{
-    t_parser		*p;
-
-    p = init_dasm_parser(path);
+	p = init_parser(path);
 	check_header(p->fd);
 	p->name = check_string(p->fd, PROG_NAME_LENGTH);
 	check_null(p->fd);

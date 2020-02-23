@@ -13,11 +13,11 @@
 #ifndef DASM_H
 # define DASM_H
 
-#include "general.h"
+# include "general.h"
 
-typedef struct 			s_op
+typedef struct			s_op
 {
-	uint8_t 			op;
+	uint8_t				op;
 	uint8_t				args_type_code[3];
 	int32_t				args[3];
 	struct s_op			*next;
@@ -25,28 +25,40 @@ typedef struct 			s_op
 
 typedef struct			s_parser
 {
-    int             	fd;
-    char            	*name;
-    char            	*comment;
+	int					fd;
+	char				*name;
+	char				*comment;
 	unsigned			exe_code_size;
-	int 				pos;
+	size_t				pos;
 	t_op				*ops;
-}                   	t_parser;
+}						t_parser;
 
 /*
 **	dasm_parser.c
 */
-void                	dasm_parser(char *path);
+void					dasm_parser(char *path);
 
 /*
-**	init_dasm_parser.c
+**	get_arg.c
 */
-void 					add_operation(t_op **ops, t_op *elem);
-t_parser				*init_dasm_parser(char *path);
+uint8_t					get_size(uint8_t arg_type_code, uint8_t op);
+int32_t					get_dir_undir(const uint8_t code[], int pos, int arg_s);
+uint8_t					get_reg(const uint8_t code[], int pos);
+
+/*
+**	check_exec_code.c
+*/
+void					check_exec_code(t_parser *p);
+
+/*
+**	d_init.c
+*/
+void					add_operation(t_op **ops, t_op *elem);
+t_parser				*init_parser(char *path);
 t_op					*init_operation();
 
 /*
-**	write_to_file.c
+**	write_asm_file.c
 */
 void					write_to_file(t_parser *p, char *path);
 
@@ -54,8 +66,7 @@ void					write_to_file(t_parser *p, char *path);
 **	dasm_utilities.c
 */
 void					free_allocated(t_parser *p);
-void					display_collected(t_parser *p);
 void					d_error(int err);
-
+void					display_collected(t_parser *p);
 
 #endif

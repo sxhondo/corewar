@@ -10,11 +10,32 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "dasm.h"
 #include "asm.h"
+
+static char			*new_ext(char *path)
+{
+	int				i;
+	char			*new;
+	char			*str;
+
+	i = 0;
+	str = path;
+	while (*str && !ft_strequ(str, ".s"))
+	{
+		str++;
+		i++;
+	}
+	if (!(new = ft_strnew(i + 4)))
+		common_error(CANT_ALLOCATE);
+	ft_strncat(new, path, i);
+	ft_strncat(new, ".cor", 4);
+	return (new);
+}
 
 void				asm_parser(char *path)
 {
+	int				fd;
+	char			*nxt;
 	t_cursor		*p;
 
 	p = init_cursor(path);
@@ -22,8 +43,14 @@ void				asm_parser(char *path)
 		lexer(p);
 	syntaxer(p);
 	analyzer(p);
-//	print_lexical_tree(p->root, 'f');
 	p->code = write_code(p);
-	write_in_file(p->code, path);
+	nxt = new_ext(path);
+	if ((fd = open(nxt, O_CREAT | O_TRUNC | O_WRONLY, 0644)) < 0)
+		common_error(CANT_CREATE);
+	ft_printf("Writing output to %s\n", nxt);
+	write(fd, p->code->data, p->code->total);
+	close(fd);
+	ft_strdel(&nxt);
+	ft_vec_del(&p->code);
 	free_all(p);
 }

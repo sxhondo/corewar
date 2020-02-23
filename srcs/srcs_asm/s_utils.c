@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   s_utils.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/02/23 20:27:47 by sxhondo           #+#    #+#             */
+/*   Updated: 2020/02/23 20:27:48 by sxhondo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "asm.h"
 
-static t_lex	*init_lex(int type, char *lex, t_cursor *p)
+static t_lex		*init_lex(int type, char *lex, t_cursor *p)
 {
-	t_lex		*l;
+	t_lex			*l;
 
 	if (!(l = ft_memalloc(sizeof(t_lex))))
 	{
@@ -16,10 +28,10 @@ static t_lex	*init_lex(int type, char *lex, t_cursor *p)
 	return (l);
 }
 
-void 			push_lexeme(t_cursor *p, int type, char *lex)
+void				push_lexeme(t_cursor *p, int type, char *lex)
 {
-	t_lex		*tmp;
-	t_lex		*l;
+	t_lex			*tmp;
+	t_lex			*l;
 
 	if ((type != NL && type != SEPARATOR && type != EOF) && lex == NULL)
 		common_error(CANT_ALLOCATE);
@@ -41,9 +53,9 @@ void 			push_lexeme(t_cursor *p, int type, char *lex)
 	}
 }
 
-void 			add_label(t_lab **dst, char *name, size_t row)
+void				add_label(t_lab **dst, char *name, size_t row)
 {
-	t_lab		*elem;
+	t_lab			*elem;
 
 	if (!(elem = ft_memalloc(sizeof(t_lab))))
 		common_error(CANT_ALLOCATE);
@@ -56,10 +68,10 @@ void 			add_label(t_lab **dst, char *name, size_t row)
 	}
 }
 
-void 		push_back_argument(t_args **dst, t_lex *lex, size_t size)
+void				push_back_argument(t_args **dst, t_lex *lex, size_t size)
 {
-	t_args 	*tmp;
-	t_args	*elem;
+	t_args			*tmp;
+	t_args			*elem;
 
 	if (!(elem = ft_memalloc(sizeof(t_args))))
 		common_error(CANT_ALLOCATE);
@@ -82,9 +94,9 @@ void 		push_back_argument(t_args **dst, t_lex *lex, size_t size)
 	}
 }
 
-void 		add_ins(t_ins **dst, t_lex *curr, t_lab *lab)
+void				add_ins(t_ins **dst, t_lex *curr, t_lab *lab)
 {
-	t_ins	*elem;
+	t_ins			*elem;
 
 	if (!(elem = ft_memalloc(sizeof(t_ins))))
 		common_error(CANT_ALLOCATE);
@@ -93,7 +105,7 @@ void 		add_ins(t_ins **dst, t_lex *curr, t_lab *lab)
 		elem->lab = lab;
 		elem->row = curr->row;
 		elem->code = get_operator(curr->lex);
-		elem->bytes = op_tab[elem->code - 1].args_type_code ? 2 : 1;
+		elem->bytes = g_op_tab[elem->code - 1].args_type_code ? 2 : 1;
 		if (*dst)
 			(*dst)->prev = elem;
 		elem->next = *dst;

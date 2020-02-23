@@ -1,32 +1,46 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sxhondo <w13cho@gmail.com>                 +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/02/23 19:44:12 by sxhondo           #+#    #+#             */
+/*   Updated: 2020/02/23 19:44:13 by sxhondo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "asm.h"
 
-static void 		get_string(t_cursor *p)
+static void			get_string(t_cursor *p)
 {
-	char 			*new;
-	int 			i;
+	char			*new;
+	int				i;
 
 	i = 0;
-	while (p->f_data[p->pos + i] != '"')
+	while (p->f_data[p->pos + i] && p->f_data[p->pos + i] != '"')
 	{
 		if (p->f_data[p->pos + i] == '\n' && ++p->row)
 			p->col = 0;
 		p->col += p->f_data[p->pos + i] == '\t' ? 4 : 1;
 		i++;
 	}
+	if (p->f_data[p->pos + i] == '\0')
+		lexical_error(p->row, p->col);
 	if (!(new = ft_strndup(p->f_data + p->pos, i)))
 		common_error(CANT_ALLOCATE);
 	push_lexeme(p, STRING, new);
 	p->pos += i + 1;
 }
 
-static void 		get_command(t_cursor *p)
+static void			get_command(t_cursor *p)
 {
-	char 			*tmp;
-	int 			i;
+	char			*tmp;
+	int				i;
 
 	i = 0;
 	while (p->f_data[p->pos + i] &&
-		   (ft_isalpha(p->f_data[p->pos + i]) || p->f_data[p->pos + i] == '.'))
+		(ft_isalpha(p->f_data[p->pos + i]) || p->f_data[p->pos + i] == '.'))
 		i++;
 	if (!(tmp = ft_strndup(p->f_data + p->pos, i)))
 		common_error(CANT_ALLOCATE);
@@ -35,14 +49,13 @@ static void 		get_command(t_cursor *p)
 	p->pos += i;
 }
 
-static char 		*get_direct(t_cursor *p)
+static char			*get_direct(t_cursor *p)
 {
-	int 			i;
-	char 			*tmp;
-	int 			type;
+	int				i;
+	char			*tmp;
+	static int		type = 0;
 
 	i = 0;
-	type = 0;
 	if (p->f_data[p->pos] == LABEL_CHAR && p->pos++)
 	{
 		while (p->f_data[p->pos + i] && is_label_char(p->f_data[p->pos + i]))
@@ -65,16 +78,16 @@ static char 		*get_direct(t_cursor *p)
 	return (tmp);
 }
 
-static void 	get_lirii(t_cursor *p)
+static void			get_lirii(t_cursor *p)
 {
-	char 		*tmp;
-	int 		len;
-	int 		i;
+	char			*tmp;
+	int				len;
+	int				i;
 
 	i = 0;
 	while (p->f_data[p->pos + i] && is_liri_attr(p->f_data[p->pos + i]))
 		i++;
-	if ((tmp = ft_strndup(p->f_data + p->pos, i)) == NULL)
+	if (!(tmp = ft_strndup(p->f_data + p->pos, i)))
 		common_error(CANT_ALLOCATE);
 	len = ft_strlen(tmp);
 	if (tmp[len - 1] == LABEL_CHAR)
@@ -92,7 +105,7 @@ static void 	get_lirii(t_cursor *p)
 	p->pos += i;
 }
 
-void 			lexer(t_cursor *p)
+void				lexer(t_cursor *p)
 {
 	skip_void(p);
 	if (p->f_data[p->pos] == '\n' && ++p->pos)
@@ -111,7 +124,5 @@ void 			lexer(t_cursor *p)
 	else if (p->f_data[p->pos++] == '\0')
 		push_lexeme(p, EOF, NULL);
 	else
-	{
 		lexical_error(p->row, p->col);
-	}
 }

@@ -6,7 +6,9 @@ set(CMAKE_C_STANDARD 11)
 include_directories(incs)
 include_directories(libft/incs)
 
-add_executable(corewar
+add_executable(
+        corewar
+        incs/general.h
         incs/dasm.h
         incs/op.h
         libft/incs/ft_printf.h
@@ -102,10 +104,10 @@ add_executable(corewar
         libft/srcs/get_next_line.c
         srcs/srcs_dasm/dasm_parser.c
         srcs/srcs_dasm/dasm_utilities.c
-        srcs/srcs_dasm/init_dasm_parser.c
-        srcs/srcs_dasm/write_s_file.c
-#        srcs_dasm/dasm.c
+        srcs/srcs_dasm/d_init.c
+        srcs/srcs_dasm/write_asm_file.c
         incs/asm.h
         srcs/srcs_asm/asm.c
-        srcs/srcs_asm/asm_utilities.c
-        srcs/srcs_asm/skipers.c srcs/srcs_asm/error.c srcs/srcs_asm/init.c srcs/srcs_asm/lexer.c srcs/srcs_asm/int_converters.c incs/general.h srcs/srcs_asm/syntaxer_straight.c srcs/srcs_asm/syntaxer.c srcs/srcs_asm/s_utils.c srcs/srcs_asm/analyzer.c srcs/srcs_asm/write_byte_code.c srcs/srcs_asm/write_cor_file.c srcs/assembler.c)
+        srcs/srcs_asm/asm_utils.c
+        srcs/srcs_asm/is.c srcs/srcs_asm/error.c srcs/srcs_asm/init.c srcs/srcs_asm/lexer.c srcs/srcs_asm/int_converters.c srcs/srcs_asm/syntaxer.c srcs/srcs_asm/s_utils.c srcs/srcs_asm/analyzer.c srcs/srcs_asm/write_byte_code.c srcs/assembler.c srcs/srcs_dasm/check_exec_code.c srcs/srcs_dasm/get_arg.c srcs/DELETE_ME.c srcs/srcs_asm/calculate_distance.c srcs/srcs_asm/lexer_utils.c
+)

@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../ft_printf/includes/ft_ptintf.h
+stdarg.h
+-
+stdint.h
+-
+libft.h
+../ft_printf/includes/libft.h
+
+../libft/libft.h
+string.h
+-
+stdlib.h
+-
+unistd.h
+-
+stdint.h
+-
+
+../vm/includes/vm.h
+ft_ptintf.h
+../vm/includes/ft_ptintf.h
+
+C:/Users/da.filiptsev/Desktop/CoreWar_Hub/vm/srcs/struct_intf/corewar_intf.c
+vm.h
+C:/Users/da.filiptsev/Desktop/CoreWar_Hub/vm/srcs/struct_intf/vm.h
+

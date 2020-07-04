@@ -1,0 +1,12 @@
+prefix=/Users/sxhondo/corewar/virtual_machine/sdl/SDL2_mixer-2.0.4
+exec_prefix=${prefix}
+libdir=/Users/sxhondo/corewar/virtual_machine/lib
+includedir=/Users/sxhondo/corewar/virtual_machine/include
+
+Name: SDL2_mixer
+Description: mixer library for Simple DirectMedia Layer
+Version: 2.0.4
+Requires: sdl2 >= 2.0.7
+Libs: -L${libdir} -lSDL2_mixer
+Cflags: -I${includedir}/SDL2
+

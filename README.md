@@ -1,2 +1,2 @@
-# corewar
+# Corewar
 ![](./vm.gif)
